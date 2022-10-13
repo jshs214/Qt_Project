@@ -35,7 +35,7 @@ OrderManagerForm::OrderManagerForm(QWidget *parent) :
     ui->treeWidget->QTreeView::setColumnWidth(2,100);
     ui->treeWidget->QTreeView::setColumnWidth(3,40);
 
-    ui->StockLineEdit->setValidator( new QIntValidator(0, 9999, this) );    //수량에 숫자만 받도록
+    ui->StockLineEdit->setValidator(new QIntValidator(0, 9999, this) );    //수량에 숫자만 받도록
 
     connect(ui->searchLineEdit, SIGNAL(returnPressed()),
             this, SLOT(on_searchPushButton_clicked()));
@@ -94,13 +94,14 @@ void OrderManagerForm::removeItem()
 {
     QTreeWidgetItem* item = ui->treeWidget->currentItem();
 
-    QString o_stock, p_stock;
-    o_stock = item->text(3);
-
-    emit removedataSent(item->text(2).left(4).toInt() , o_stock);
+    int id = item->text(0).toInt();
+    QString ordertree_stock,ordertree_product;
+    ordertree_stock = item->text(3);
+    ordertree_product=item->text(2);
+    emit removedataSent(ordertree_product.left(4).toInt() , ordertree_stock);
 
     if(item != nullptr) {
-        orderList.remove(item->text(0).toInt());
+        orderList.remove(id);
         ui->treeWidget->takeTopLevelItem(ui->treeWidget->indexOfTopLevelItem(item));
         ui->treeWidget->update();
 
@@ -162,6 +163,11 @@ void OrderManagerForm::on_modifyPushButton_clicked()
         int key = item->text(0).toInt();
         OrderItem* o = orderList[key];
         QString client, product, stock, price, sum, address;
+        QString productkey;
+        QString producttree_stock,ordertree_stock;
+        productkey =  item->text(2).left(4);
+        producttree_stock = pitem->text(3);
+        ordertree_stock =item->text(3);
 
         client = ui->CIDlineEdit->text();
         product = ui->PIDlineEdit->text();
@@ -171,26 +177,26 @@ void OrderManagerForm::on_modifyPushButton_clicked()
 
         if(stock ==nullptr) return; // 수량 입력 안할 경우 예외처리
 
-        int resultstock = pitem->text(3).toInt() + item->text(3).toInt();
+        int resultstock = producttree_stock.toInt() + ordertree_stock.toInt();
         if( resultstock < stock.toInt()) {
             QMessageBox::information(this, "Sold Out",
                                      QString("재고 부족\n%0개 까지 변경 가능합니다.").arg(resultstock));
             return ;
         }
-        QString prdocutkey =  item->text(2).left(4);
-        if( prdocutkey != pitem->text(0)){
+
+        if( productkey != pitem->text(0)){
             QMessageBox::information(this, "Error",
                                      QString("오류\n선택한 제품명과 고르신 제품명이 다릅니다."));
             return ;
         }
-        emit productModKeySent(prdocutkey.toInt(), stock , item->text(3));
+        emit productModKeySent(productkey.toInt(), stock , ordertree_stock);
         // 키값, 수정할 수량, 입력된 수량
 
         int result = price.toInt() * stock.toInt();
         sum = QString::number(result);
 
-        int up_ptreewidget = pitem->text(3).toInt() + item->text(3).toInt() - ui->StockLineEdit->text().toInt();
-        pitem->setText((3), QString::number(up_ptreewidget));
+        int up_ptreewidget = producttree_stock.toInt() + ordertree_stock.toInt() - ui->StockLineEdit->text().toInt();
+        pitem->setText((3), QString::number(up_ptreewidget));   //제품리스트의 재고 변경
 
         o->setClient(client);
         o->setProduct(product);
@@ -213,14 +219,13 @@ void OrderManagerForm::on_modifyPushButton_clicked()
 
 void OrderManagerForm::on_addPushButton_clicked()
 {
-    if(ui->label_2->text() != "주문정보관리")
-    {
-        QMessageBox::information(this, "오류",
-                                 QString("검색창입니다.\n주문정보관리창으로 이동하세요."));
-        return;
-    }
 
-    QString client, product, stock,price, address;
+
+    QTreeWidgetItem* pitem = ui->producttreeWidget->currentItem();
+    QString client, product, stock, price, address;
+    QString sum, productkey, producttree_stock;
+
+
     int id = makeId( );
     client = ui->CIDlineEdit->text();
     product = ui->PIDlineEdit->text();
@@ -228,27 +233,32 @@ void OrderManagerForm::on_addPushButton_clicked()
     price = ui->pricelineEdit->text();
     address = ui->addresslineEdit->text();
 
+    producttree_stock = pitem->text(3); //제품리스트의 재고
+    productkey =  ui->PIDlineEdit->text().left(4);
+
     int result = price.toInt() * stock.toInt(); //총합을 위한 연산
-    QString sum = QString::number(result);
+    sum = QString::number(result);
 
-    QString key =  ui->PIDlineEdit->text().left(4);
-    emit productAddKeySent( key.toInt(), stock );
+    emit productAddKeySent(productkey.toInt(), stock );
 
-    QTreeWidgetItem* pitem = ui->producttreeWidget->currentItem();
+    if(ui->label_2->text() != "주문정보관리")
+    {
+        QMessageBox::information(this, "오류",
+                                 QString("검색창입니다.\n주문정보관리창으로 이동하세요."));
+        return;
+    }
 
     if(pitem == nullptr) return;
 
+    if(producttree_stock.toInt() < ui->StockLineEdit->text().toInt()) return;
 
-    if(  pitem->text(3).toInt() < ui->StockLineEdit->text().toInt()) return;
-
-    QString treewidgetstock = pitem->text(3); // 재고
     //주문이 되면 제품리스트의 재고를 변경
-    QString pstock = QString::number(pitem->text(3).toInt() - stock.toInt());
-    pitem->setText((3), pstock);
+    QString result_stock = QString::number(producttree_stock.toInt() - stock.toInt());
+    pitem->setText((3), result_stock);
 
-    // 트리위젯에서 선택되고, 모든 요소가 입력 되고 재고>=입력값이면.
+    // 제품리스트에서 선택이 되고, 재고>=입력값이면.
     if( client.length() && product.length() && stock.length() &&price.length() && address.length() &&
-            treewidgetstock.toInt() >= stock.toInt())
+            producttree_stock.toInt() >= stock.toInt())
     {
         OrderItem* o = new OrderItem(id, client, product, stock, price, sum, address);
         orderList.insert(id, o);
@@ -265,6 +275,12 @@ void OrderManagerForm::on_addPushButton_clicked()
 void OrderManagerForm::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
 {
     Q_UNUSED(column);
+
+    int clientkey, productkey;
+
+    clientkey = item->text(1).left(4).toInt();
+    productkey = item->text(2).left(4).toInt();
+
     ui->idLineEdit->setText(item->text(0));
     ui->CIDlineEdit->setText(item->text(1));
     ui->PIDlineEdit->setText(item->text(2));
@@ -272,8 +288,6 @@ void OrderManagerForm::on_treeWidget_itemClicked(QTreeWidgetItem *item, int colu
     ui->pricelineEdit->setText(item->text(4));
     ui->addresslineEdit->setText(item->text(6));
 
-    int clientkey = item->text(1).left(4).toInt();
-    int productkey = item->text(2).left(4).toInt();
     emit clientKeySent(clientkey);      //클릭 시, 고객, 제품의 리스트를 불러오기 위한 시그널
     emit productKeySent(productkey);
 

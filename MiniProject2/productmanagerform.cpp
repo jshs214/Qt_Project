@@ -95,7 +95,7 @@ void ProductManagerForm::on_searchPushButton_clicked()
     int i = ui->searchComboBox->currentIndex();
     for (const auto& v : productList) {
         ProductItem* p = v;
-        p->setHidden(true); //고객리스트 히든
+        p->setHidden(true); //검색 시, 기존 고객리스트 히든
     }
     auto flag = (i)? Qt::MatchCaseSensitive|Qt::MatchContains
                    : Qt::MatchCaseSensitive;
