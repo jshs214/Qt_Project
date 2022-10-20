@@ -29,7 +29,6 @@ private slots:
     void on_addPushButton_clicked();
     void on_modifyPushButton_clicked();
     void on_searchPushButton_clicked();
-    void on_pushButton_clicked();
 
     void receiveProductName(QString);
     void receiveAddStock(int, QString);

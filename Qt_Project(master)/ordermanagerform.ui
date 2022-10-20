@@ -17,7 +17,7 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout" stretch="2,5">
      <item>
-      <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,0,0,2,1,1,1">
+      <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,0,0,2,1,1">
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
@@ -331,13 +331,6 @@
            </layout>
           </item>
          </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButton">
-         <property name="text">
-          <string>Quit</string>
-         </property>
         </widget>
        </item>
       </layout>

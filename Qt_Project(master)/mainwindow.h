@@ -12,7 +12,7 @@ class ClientManagerForm;
 class ProductManagerForm;
 class OrderManagerForm;
 class ChatServerForm;
-
+class Chatting_Client;
 
 class MainWindow : public QMainWindow
 {
@@ -40,7 +40,7 @@ private:
     ProductManagerForm *productForm;
     OrderManagerForm *orderForm;
     ChatServerForm *chatForm;
-
+    Chatting_Client *chatClientForm;
 
 signals:
     void clientupdate();

@@ -167,15 +167,21 @@ void ProductManagerForm::on_treeWidget_itemClicked(QTreeWidgetItem *item, int co
 }
 
 
-void ProductManagerForm::on_pushButton_clicked()
-{
-    qApp->quit();
-}
-
 void ProductManagerForm::receiveProductName(QString str)
 {
     auto flag =  Qt::MatchCaseSensitive|Qt::MatchContains;
     {
+        auto id = ui->treeWidget->findItems(str, flag,0);        //키값비교, 0
+        foreach(auto i, id) {
+            ProductItem* p = static_cast<ProductItem*>(i);
+            int id = p->id();
+            QString name = p->getName();
+            QString price = p->getPrice();
+            QString stock = p->getStock();
+            ProductItem* item = new ProductItem(id, name, price, stock);
+            emit productdataSent(item);
+        }
+
         auto items = ui->treeWidget->findItems(str, flag,1);        //이름이므로 1
         foreach(auto i, items) {
             ProductItem* p = static_cast<ProductItem*>(i);
@@ -184,7 +190,6 @@ void ProductManagerForm::receiveProductName(QString str)
             QString price = p->getPrice();
             QString stock = p->getStock();
             ProductItem* item = new ProductItem(id, name, price, stock);
-
             emit productdataSent(item);
         }
     }

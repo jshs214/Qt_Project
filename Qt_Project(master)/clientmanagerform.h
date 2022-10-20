@@ -33,9 +33,8 @@ private slots:
     void on_addPushButton_clicked();
     void on_modifyPushButton_clicked();
     void on_searchPushButton_clicked();
-    void on_pushButton_clicked();
-    void on_clearbutton_clicked();
 
+    void on_clearbutton_clicked();
     void receiveClientName(QString);
     void receiveClientKey(int);
 
@@ -53,7 +52,8 @@ private:
 signals:
     void clientdataSent(ClientItem*);
     void clickClientSent(ClientItem*);
-    void addClient(int, QString, QString, QString);
+    void addClient(int, QString);
+    void remClient(QString);
 };
 
 #endif // CLIENTMANAGERFORM_H

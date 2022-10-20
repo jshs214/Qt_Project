@@ -46,7 +46,7 @@ void ClientManagerForm::loadData()
             ui->treeWidget->addTopLevelItem(c);
             clientList.insert(id, c);
 
-            emit addClient(id, c->getName(), c->getPhoneNumber(), c->getAddress());
+            emit addClient(id, c->getName());
         }
     }
     file.close( );
@@ -84,8 +84,8 @@ void ClientManagerForm::removeItem()
     QTreeWidgetItem* item = ui->treeWidget->currentItem();
     if(item != nullptr) {
         clientList.remove(item->text(0).toInt());
+        emit remClient(item->text(1));
         ui->treeWidget->takeTopLevelItem(ui->treeWidget->indexOfTopLevelItem(item));
-
         ui->treeWidget->update();
     }
 }
@@ -159,7 +159,7 @@ void ClientManagerForm::on_addPushButton_clicked()
         ui->nameLineEdit->clear();
         ui->phoneNumberLineEdit->clear();
         ui->addressLineEdit->clear();
-        emit addClient(id, name, number, address);
+        emit addClient(id, name);
     }
 }
 
@@ -172,16 +172,22 @@ void ClientManagerForm::on_treeWidget_itemClicked(QTreeWidgetItem *item, int col
     ui->addressLineEdit->setText(item->text(3));
 }
 
-
-void ClientManagerForm::on_pushButton_clicked()
-{
-    qApp->quit();
-}
-
-void ClientManagerForm::receiveClientName(QString str)  //Order에서 이름을 받아 emit
+void ClientManagerForm::receiveClientName(QString str)  //Order에서 id나 이름을 받아 emit
 {
     auto flag =  Qt::MatchCaseSensitive|Qt::MatchContains;
     {
+        auto id = ui->treeWidget->findItems(str, flag,0);        //키값비교, 0
+        foreach(auto i, id) {
+            ClientItem* c = static_cast<ClientItem*>(i);
+            int id = c->id();
+            QString name = c->getName();
+            QString number = c->getPhoneNumber();
+            QString address = c->getAddress();
+            ClientItem* item = new ClientItem(id, name, number, address);
+
+            emit clientdataSent(item);
+        }
+
         auto items = ui->treeWidget->findItems(str, flag,1);        //이름이므로 1
         foreach(auto i, items) {
             ClientItem* c = static_cast<ClientItem*>(i);

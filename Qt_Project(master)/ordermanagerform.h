@@ -31,7 +31,7 @@ private slots:
     void on_addPushButton_clicked();
     void on_modifyPushButton_clicked();
     void on_searchPushButton_clicked();
-    void on_pushButton_clicked();
+
     void on_cbutton_clicked();
     void on_pbutton_clicked();
     void on_clearbutton_clicked();  //clear 버튼

@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "chatserverform.h"
+
 #include "chatting_client.h"
 #include "qobjectdefs.h"
 #include "ui_mainwindow.h"
@@ -48,6 +49,7 @@ MainWindow::MainWindow(QWidget *parent)
             clientForm, SLOT(receiveClientName(QString)));
     connect(clientForm,SIGNAL(clientdataSent(ClientItem*)),
             orderForm, SLOT(receiveClientData(ClientItem*)));
+
     connect(orderForm, SIGNAL(productNameSent(QString)),  //검색 후 제품리스트 출력을 위한 시그널 슬롯
             productForm, SLOT(receiveProductName(QString)));
     connect(productForm,SIGNAL(productdataSent(ProductItem*)),
@@ -78,12 +80,15 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->mdiArea->setActiveSubWindow(cw);    //없으면 마지막으로 추가한 subWindow가 열림
 
-    connect(clientForm, SIGNAL(addClient(int, QString, QString, QString) ),
-            chatForm, SLOT(addClient(int, QString, QString, QString)));
+    connect(clientForm, SIGNAL(addClient(int, QString) ),   //고객관리에서 데이터 추가 시 채팅서버에 고객리스트 추가
+            chatForm, SLOT(addClient(int, QString)));
+    connect(clientForm, SIGNAL(remClient(QString) ),        //고객관리에서 데이터 삭제 시 채팅서버에 고객리스트 삭제
+            chatForm, SLOT(remClient(QString)) );
 
     clientForm->loadData();
     productForm->loadData();
     orderForm->loadData();
+
 }
 
 MainWindow::~MainWindow()
@@ -118,9 +123,6 @@ void MainWindow::on_actionOrder_triggered()
 
 }
 
-
-
-
 void MainWindow::on_actionChatting_triggered()
 {
     if(chatForm != nullptr) {
@@ -131,7 +133,7 @@ void MainWindow::on_actionChatting_triggered()
 
 void MainWindow::on_actionChat_triggered()
 {
-    Chatting_Client *chatForm1 = new Chatting_Client;
-    chatForm1->show();
+    chatClientForm = new Chatting_Client;
+    chatClientForm -> show();
 }
 

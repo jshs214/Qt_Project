@@ -222,11 +222,16 @@ void OrderManagerForm::on_modifyPushButton_clicked()
 
 void OrderManagerForm::on_addPushButton_clicked()
 {
+    if(ui->label_2->text() != "OrderManagerInfo")
+    {
+        QMessageBox::information(this, "Error",
+                                 QString("This is Search Info.\nGo to OrderManagerInfo."));
+        return;
+    }
 
     QTreeWidgetItem* pitem = ui->producttreeWidget->currentItem();
     QString client, product, stock, price, address;
     QString sum, productkey, producttree_stock;
-
 
     int id = makeId( );
     client = ui->CIDlineEdit->text();
@@ -243,12 +248,7 @@ void OrderManagerForm::on_addPushButton_clicked()
 
     emit productAddKeySent(productkey.toInt(), stock );
 
-    if(ui->label_2->text() != "OrderManagerInfo")
-    {
-        QMessageBox::information(this, "Error",
-                                 QString("This is Search Info.\nGo to OrderManagerInfo."));
-        return;
-    }
+
 
     if(pitem == nullptr) return;
 
@@ -321,10 +321,6 @@ void OrderManagerForm::receive_ProductTreewidget_itemclicked(ProductItem* produc
     ui->producttreeWidget->addTopLevelItem(item);
 }
 
-void OrderManagerForm::on_pushButton_clicked()
-{
-    qApp->quit();
-}
 
 void OrderManagerForm::on_cbutton_clicked()
 {
@@ -384,7 +380,7 @@ void OrderManagerForm::on_producttreeWidget_itemClicked(QTreeWidgetItem *item, i
     ui->pricelineEdit->setText(item->text(2));
 }
 
-void OrderManagerForm::on_clearbutton_clicked() //지우개버튼 클릭 시 화면 초기화
+void OrderManagerForm::on_clearbutton_clicked() //Clear 버튼 클릭 시 화면 초기화
 {
     ui->clienttreeWidget->clear();
     ui->producttreeWidget->clear();
@@ -394,6 +390,8 @@ void OrderManagerForm::on_clearbutton_clicked() //지우개버튼 클릭 시 화
     ui->addresslineEdit->clear();
     ui->pricelineEdit->clear();
     ui->searchLineEdit->clear();
+    ui->ClientLineEdit->clear();
+    ui->ProductLineEdit->clear();
 }
 
 void OrderManagerForm::on_pushButton_2_clicked()
