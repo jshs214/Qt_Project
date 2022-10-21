@@ -130,7 +130,6 @@ void ChatServerForm::receiveData( )
             return;
         }
         clientConnection->disconnectFromHost(); //고객리스트에 없는 이름이면 연결 해제
-
         break;
 
     case Chat_In:
@@ -243,8 +242,8 @@ void ChatServerForm::addClient(int id, QString name)    //고객관리창에서 
 
     ui->clientTreeWidget->addTopLevelItem(item);
     clientIDHash[name] = id;
-
 }
+
 void ChatServerForm::remClient(QString name)    //고객관리창에서 데이터 삭제 시 활동 중리스트 삭제
 {
     foreach(auto item, ui->clientTreeWidget->findItems(name, Qt::MatchFixedString, 1)) {
