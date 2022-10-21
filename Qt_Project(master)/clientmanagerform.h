@@ -34,12 +34,12 @@ private slots:
     void on_modifyPushButton_clicked();
     void on_searchPushButton_clicked();
 
-    void on_clearbutton_clicked();
     void receiveClientName(QString);
     void receiveClientKey(int);
 
     void on_ClientManagement_clicked();
 
+    void on_clearButton_clicked();
 
 private:
     int makeId();

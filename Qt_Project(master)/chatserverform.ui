@@ -99,7 +99,13 @@
        </item>
        <item>
         <widget class="QTreeWidget" name="clientTreeWidget">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
          <property name="rootIsDecorated">
+          <bool>false</bool>
+         </property>
+         <property name="allColumnsShowFocus">
           <bool>false</bool>
          </property>
          <property name="wordWrap">

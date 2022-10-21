@@ -87,6 +87,7 @@ void ProductManagerForm::removeItem()
 
 void ProductManagerForm::showContextMenu(const QPoint &pos)
 {
+    if(ui->treeWidget->currentItem() == nullptr)    return;
     QPoint globalPos = ui->treeWidget->mapToGlobal(pos);
     menu->exec(globalPos);
 }
@@ -138,7 +139,7 @@ void ProductManagerForm::on_addPushButton_clicked()
     if(ui->label->text() != "ProductInfoManager")
     {
         QMessageBox::warning(this, "Error",
-                                 QString("This is Search Info.\nGo to ProductInfoManager."));
+                             QString("This is Search Info.\nGo to ProductInfoManager."));
         return;
     }
     QString name, price, stock;

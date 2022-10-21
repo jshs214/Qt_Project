@@ -92,6 +92,7 @@ void ClientManagerForm::removeItem()
 
 void ClientManagerForm::showContextMenu(const QPoint &pos)
 {
+    if(ui->treeWidget->currentItem() == nullptr)    return;
     QPoint globalPos = ui->treeWidget->mapToGlobal(pos);
     menu->exec(globalPos);
 }
@@ -215,16 +216,6 @@ void ClientManagerForm::receiveClientKey(int key)   //키값에 해당하는 리
     emit clickClientSent(item);
 }
 
-void ClientManagerForm::on_clearbutton_clicked()
-{
-    ui->idLineEdit->clear();
-    ui->nameLineEdit->clear();
-    ui->phoneNumberLineEdit->clear();
-    ui->addressLineEdit->clear();
-    ui->searchLineEdit->clear();
-}
-
-
 void ClientManagerForm::on_ClientManagement_clicked()
 {
     ui->label->setText("ClientInfoManager");
@@ -233,3 +224,13 @@ void ClientManagerForm::on_ClientManagement_clicked()
         c->setHidden(false);
     }
 }
+
+void ClientManagerForm::on_clearButton_clicked()
+{
+    ui->idLineEdit->clear();
+    ui->nameLineEdit->clear();
+    ui->phoneNumberLineEdit->clear();
+    ui->addressLineEdit->clear();
+    ui->searchLineEdit->clear();
+}
+

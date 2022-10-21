@@ -121,6 +121,7 @@ void OrderManagerForm::removeItem()
 
 void OrderManagerForm::showContextMenu(const QPoint &pos)
 {
+    if(ui->treeWidget->currentItem() == nullptr)    return;
     QPoint globalPos = ui->treeWidget->mapToGlobal(pos);
     menu->exec(globalPos);
 }

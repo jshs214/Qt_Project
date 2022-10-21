@@ -27,7 +27,7 @@ Chatting_Client::Chatting_Client(QWidget *parent) :
     ui->setupUi(this);
 
     ui->serverAddress->setText("127.0.0.1");
-    //serverAddress->setInputMask("999.999.999.999;_");
+    //ui->serverAddress->setInputMask("999.999.999.999;_");
     QRegularExpression re("^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\."
                           "(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\."
                           "(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\."
@@ -67,7 +67,7 @@ Chatting_Client::Chatting_Client(QWidget *parent) :
     // 파일 전송을 위한 소켓
     fileClient = new QTcpSocket(this);
     connect(fileClient, SIGNAL(bytesWritten(qint64)), SLOT(goOnSend(qint64)));
-//    connect(fileClient, SIGNAL(disconnected( )), fileClient, SLOT(deletelater( )));
+    //    connect(fileClient, SIGNAL(disconnected( )), fileClient, SLOT(deletelater( )));
 
     progressDialog = new QProgressDialog(0);
     progressDialog->setAutoClose(true);
@@ -83,18 +83,25 @@ Chatting_Client::Chatting_Client(QWidget *parent) :
             ui->connectButton->setText(tr("Chat in"));
             ui->name->setReadOnly(true);
             ui->logoutButton->setEnabled(true);
-        } else if(ui->connectButton->text() == tr("Chat in"))  {
+            ui->stateLineEdit->setText(tr("Successed LogIn"));
+            ui->serverAddress->setEnabled(false);
+            ui->serverPort->setEnabled(false);
+        }
+        else if(ui->connectButton->text() == tr("Chat in"))  {
             sendProtocol(Chat_In, ui->name->text().toStdString().data());
             ui->connectButton->setText(tr("Chat Out"));
             ui->inputLine->setEnabled(true);
             ui->sentButton->setEnabled(true);
             ui->fileButton->setEnabled(true);
-        } else if(ui->connectButton->text() == tr("Chat Out"))  {
+            ui->stateLineEdit->setText(tr("Active"));
+        }
+        else if(ui->connectButton->text() == tr("Chat Out"))  {
             sendProtocol(Chat_Out, ui->name->text().toStdString().data());
             ui->connectButton->setText(tr("Chat in"));
             ui->inputLine->setDisabled(true);
             ui->sentButton->setDisabled(true);
             ui->fileButton->setDisabled(true);
+            ui->stateLineEdit->setText(tr("Successed LogIn"));
         }
     } );
 
@@ -148,15 +155,19 @@ void Chatting_Client::receiveData( )
         ui->inputLine->setDisabled(true);        //버튼 상태 변경
         ui->sentButton->setDisabled(true);
         ui->fileButton->setDisabled(true);
+        ui->connectButton->setText("Chat in");
         ui->name->setReadOnly(false);
+        ui->stateLineEdit->setText(tr("Successed LogIn"));
         break;
     case Chat_Invite:
         QMessageBox::information(this, tr("Chatting Client"), \
-                              tr("Invited from Server"));
+                                 tr("Invited from Server"));
         ui->inputLine->setEnabled(true);        //버튼 상태 변경
         ui->sentButton->setEnabled(true);
         ui->fileButton->setEnabled(true);
+        ui->connectButton->setText("Chat Out");
         ui->name->setReadOnly(true);
+        ui->stateLineEdit->setText(tr("Active"));
         break;
     default:
         break;
@@ -172,7 +183,9 @@ void Chatting_Client::disconnect( )
     ui->name->setReadOnly(false);
     ui->sentButton->setEnabled(false);
     ui->connectButton->setText(tr("Log In"));
-        ui->logoutButton->setDisabled(true);
+    ui->logoutButton->setDisabled(true);
+    ui->serverAddress->setEnabled(true);
+    ui->serverPort->setEnabled(true);
 }
 
 //프로토콜 생성해서 서버로 전송
@@ -227,37 +240,37 @@ void Chatting_Client::sendFile() // Open the file and get the file name (includi
 
     QString filename = QFileDialog::getOpenFileName(this);
     if(filename.length()){
-    file = new QFile(filename);
-    file->open(QFile::ReadOnly);
+        file = new QFile(filename);
+        file->open(QFile::ReadOnly);
 
-    qDebug() << QString("file %1 is opened").arg(filename);
-    progressDialog->setValue(0); // Not sent for the first time
+        qDebug() << QString("file %1 is opened").arg(filename);
+        progressDialog->setValue(0); // Not sent for the first time
 
-    if (!isSent) { // Only the first time it is sent, it happens when the connection generates the signal connect
-        fileClient->connectToHost(ui->serverAddress->text( ),
-                                  ui->serverPort->text( ).toInt( ) + 1);    //기존 포트 + 1 8001번(파일전송서버)
-        isSent = true;
-    }
+        if (!isSent) { // Only the first time it is sent, it happens when the connection generates the signal connect
+            fileClient->connectToHost(ui->serverAddress->text( ),
+                                      ui->serverPort->text( ).toInt( ) + 1);    //기존 포트 + 1 8001번(파일전송서버)
+            isSent = true;
+        }
 
-    // When sending for the first time, connectToHost initiates the connect signal to call send, and you need to call send after the second time
+        // When sending for the first time, connectToHost initiates the connect signal to call send, and you need to call send after the second time
 
-    byteToWrite = totalSize = file->size(); // The size of the remaining data
-    loadSize = 1024; // The size of data sent each time
+        byteToWrite = totalSize = file->size(); // The size of the remaining data
+        loadSize = 1024; // The size of data sent each time
 
-    QDataStream out(&outBlock, QIODevice::WriteOnly);
-    out << qint64(0) << qint64(0) << filename << ui->name->text();
+        QDataStream out(&outBlock, QIODevice::WriteOnly);
+        out << qint64(0) << qint64(0) << filename << ui->name->text();
 
-    totalSize += outBlock.size(); // The total size is the file size plus the size of the file name and other information
-    byteToWrite += outBlock.size();
+        totalSize += outBlock.size(); // The total size is the file size plus the size of the file name and other information
+        byteToWrite += outBlock.size();
 
-    out.device()->seek(0); // Go back to the beginning of the byte stream to write a qint64 in front, which is the total size and file name and other information size
-    out << totalSize << qint64(outBlock.size());
+        out.device()->seek(0); // Go back to the beginning of the byte stream to write a qint64 in front, which is the total size and file name and other information size
+        out << totalSize << qint64(outBlock.size());
 
-    fileClient->write(outBlock); // Send the read file to the socket
+        fileClient->write(outBlock); // Send the read file to the socket
 
-    progressDialog->setMaximum(totalSize);
-    progressDialog->setValue(totalSize-byteToWrite);
-    progressDialog->show();
+        progressDialog->setMaximum(totalSize);
+        progressDialog->setValue(totalSize-byteToWrite);
+        progressDialog->show();
     }
     qDebug() << QString("Sending file %1").arg(filename);
 
@@ -268,5 +281,9 @@ void Chatting_Client::on_logoutButton_clicked()
     sendProtocol(Chat_LogOut, ui->name->text().toStdString().data());        //서버쪽에서 이름을 받아,
     ui->message->clear();
     clientSocket->disconnectFromHost();
+
+    ui->stateLineEdit->setText("");
+    ui->serverAddress->setEnabled(true);
+    ui->serverPort->setEnabled(true);
 }
 
