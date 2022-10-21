@@ -229,6 +229,7 @@ void ChatServerForm::addClient(int id, QString name)    //고객관리창에서 
     item->setText(0, "Off");
     item->setIcon(0, QIcon(":/images/redlight.png"));
     item->setText(1, name);
+    item->setText(2, QString::number(id));
 
     ui->clientTreeWidget->addTopLevelItem(item);
     clientIDHash[name] = id;

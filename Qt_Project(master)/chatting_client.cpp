@@ -52,9 +52,7 @@ Chatting_Client::Chatting_Client(QWidget *parent) :
 
     connect(ui->fileButton, SIGNAL(clicked( )), SLOT(sendFile( )));
     ui->fileButton->setDisabled(true);
-
-    // 종료 기능
-    connect(ui->quitButton, SIGNAL(clicked( )), qApp, SLOT(quit( )));
+    ui->logoutButton->setDisabled(true);
 
     // 채팅을 위한 소켓
     clientSocket = new QTcpSocket(this);			// 클라이언트 소켓 생성
@@ -84,6 +82,7 @@ Chatting_Client::Chatting_Client(QWidget *parent) :
             sendProtocol(Chat_Login, ui->name->text().toStdString().data());        //서버쪽에서 이름을 받아,
             ui->connectButton->setText(tr("Chat in"));
             ui->name->setReadOnly(true);
+            ui->logoutButton->setEnabled(true);
         } else if(ui->connectButton->text() == tr("Chat in"))  {
             sendProtocol(Chat_In, ui->name->text().toStdString().data());
             ui->connectButton->setText(tr("Chat Out"));
@@ -173,6 +172,7 @@ void Chatting_Client::disconnect( )
     ui->name->setReadOnly(false);
     ui->sentButton->setEnabled(false);
     ui->connectButton->setText(tr("Log In"));
+        ui->logoutButton->setDisabled(true);
 }
 
 //프로토콜 생성해서 서버로 전송

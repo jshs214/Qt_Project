@@ -80,6 +80,11 @@
               <string>Name</string>
              </property>
             </column>
+            <column>
+             <property name="text">
+              <string>ID</string>
+             </property>
+            </column>
            </widget>
           </item>
          </layout>
@@ -108,6 +113,11 @@
          <column>
           <property name="text">
            <string>Name</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>ID</string>
           </property>
          </column>
         </widget>
