@@ -49,7 +49,6 @@ private:
 private slots:
     void acceptConnection();                /* 파일 서버 */
     void readClient();
-
     void clientConnect( );                  /* 채팅 서버 */
     void receiveData( );
     void removeClient( );

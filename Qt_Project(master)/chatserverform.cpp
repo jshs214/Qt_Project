@@ -124,11 +124,13 @@ void ChatServerForm::receiveData( )
             if(item->text(0) != "On") {
                 item->setText(0, "On");
                 clientSocketHash[name] = clientConnection;
+                clientNameHash[port] = name;
                 item->setIcon(0, QIcon(":/images/yellowlight.png"));
-                return;
             }
+            return;
         }
         clientConnection->disconnectFromHost(); //고객리스트에 없는 이름이면 연결 해제
+
         break;
 
     case Chat_In:
@@ -136,19 +138,12 @@ void ChatServerForm::receiveData( )
             if(item->text(0) != "Chat") {
                 item->setText(0, "Chat");
                 item->setIcon(0, QIcon(":/images/greenlight.png"));
-                clientNameHash[port] = name;
-
+                //clientNameHash[port] = name;
                 QTreeWidgetItem* chatItem = new QTreeWidgetItem(ui->chattingTreeWidget);
                 chatItem->setText(1,clientNameHash[port]);
                 chatItem->setIcon(0, QIcon(":/images/greenlight.png"));
                 chatItem->setText(2, item->text(2));
             }
-            /*// 이미 chat in 이면 중복되지않게 생성 x
-            foreach(auto citem, ui->chattingTreeWidget->findItems(name, Qt::MatchFixedString, 1)) {
-                Q_UNUSED(citem);
-                return;
-            }
-            */
         }
         break;
 
@@ -177,8 +172,8 @@ void ChatServerForm::receiveData( )
         QTreeWidgetItem* item = new QTreeWidgetItem(ui->messageTreeWidget);
         item->setText(0, ip);
         item->setText(1, QString::number(port));
-        item->setText(2, QString::number(clientIDHash[clientNameHash[port]]));
-        item->setText(3, clientNameHash[port]);
+        item->setText(2, QString::number(clientIDHash[clientNameHash[port]]));  //ID
+        item->setText(3, clientNameHash[port]);                                 //name
         item->setText(4, QString(data));
         item->setText(5, QDateTime::currentDateTime().toString());
         item->setToolTip(4, QString(data));
@@ -191,16 +186,14 @@ void ChatServerForm::receiveData( )
     }
         break;
 
-
     case Chat_Out:
         foreach(auto item, ui->clientTreeWidget->findItems(name, Qt::MatchContains, 1)) {
             if(item->text(0) != "On") {
                 item->setText(0, "On");
                 item->setIcon(0, QIcon(":/images/yellowlight.png"));
             }
-            clientNameHash.remove(port);
         }
-        //
+        // 접속중인 트리위젯의 데이터 제거
         foreach(auto item, ui->chattingTreeWidget->findItems(name, Qt::MatchFixedString, 1)) {
             ui->chattingTreeWidget->takeTopLevelItem(ui->chattingTreeWidget->indexOfTopLevelItem(item));
         }
@@ -212,7 +205,9 @@ void ChatServerForm::receiveData( )
                 item->setIcon(0, QIcon(":/images/redlight.png"));
             }
             clientSocketHash.remove(name);
+            //clientNameHash.remove(port);
         }
+
         foreach(auto item, ui->chattingTreeWidget->findItems(name, Qt::MatchFixedString, 1)) {
             ui->chattingTreeWidget->takeTopLevelItem(ui->chattingTreeWidget->indexOfTopLevelItem(item));
         }
@@ -248,8 +243,9 @@ void ChatServerForm::addClient(int id, QString name)    //고객관리창에서 
 
     ui->clientTreeWidget->addTopLevelItem(item);
     clientIDHash[name] = id;
+
 }
-void ChatServerForm::remClient(QString name)    //고객관리창에서 데이터 삭제 시 리스트 삭제
+void ChatServerForm::remClient(QString name)    //고객관리창에서 데이터 삭제 시 활동 중리스트 삭제
 {
     foreach(auto item, ui->clientTreeWidget->findItems(name, Qt::MatchFixedString, 1)) {
         ui->clientTreeWidget->takeTopLevelItem(ui->clientTreeWidget->indexOfTopLevelItem(item));

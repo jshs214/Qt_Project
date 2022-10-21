@@ -155,7 +155,7 @@ void Chatting_Client::receiveData( )
         ui->inputLine->setDisabled(true);        //버튼 상태 변경
         ui->sentButton->setDisabled(true);
         ui->fileButton->setDisabled(true);
-        ui->connectButton->setText("Chat in");
+        ui->connectButton->setText(tr("Chat in"));
         ui->name->setReadOnly(false);
         ui->stateLineEdit->setText(tr("Successed LogIn"));
         break;
