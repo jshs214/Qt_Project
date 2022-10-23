@@ -47,6 +47,7 @@ Chatting_Client::Chatting_Client(QWidget *parent) :
     connect(ui->inputLine, SIGNAL(returnPressed( )), ui->inputLine, SLOT(clear( )));
     connect(ui->sentButton, SIGNAL(clicked( )), SLOT(sendData( )));
     connect(ui->sentButton, SIGNAL(clicked( )), ui->inputLine, SLOT(clear( )));
+
     ui->inputLine->setEnabled(false);
     ui->sentButton->setEnabled(false);
 

@@ -35,8 +35,9 @@ private:
     QTcpServer *chatServer;
     QTcpServer *fileServer;
     QHash<quint16, QString> clientNameHash;     // port, name
-    QHash<QString, QTcpSocket*> clientSocketHash;// name, socket
+    QHash<QString, QTcpSocket*> clientSocketHash;// id, socket
     QHash<QString, int> clientIDHash;           // name, id
+    QHash<quint16, QString> clientPortIDHash;     // port, name
     QMenu* menu;
     QFile* file;
     QProgressDialog* progressDialog;
