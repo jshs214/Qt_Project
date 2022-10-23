@@ -89,6 +89,7 @@ MainWindow::MainWindow(QWidget *parent)
     productForm->loadData();
     orderForm->loadData();
 
+    setWindowTitle(tr("QtProject"));
 }
 
 MainWindow::~MainWindow()
@@ -101,9 +102,11 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_actionClient_triggered()
 {
+
     if(clientForm != nullptr) {
         clientForm->setFocus();
     }
+
 }
 
 

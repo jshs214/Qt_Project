@@ -97,7 +97,7 @@ void ChatServerForm::clientConnect( )
 }
 
 void ChatServerForm::receiveData( )
-{    
+{
     QTcpSocket *clientConnection = dynamic_cast<QTcpSocket *>(sender( ));
     QByteArray bytearray = clientConnection->read(BLOCK_SIZE);
 
@@ -116,40 +116,57 @@ void ChatServerForm::receiveData( )
 
     ui->ipLineEdit->setText(clientConnection->localAddress().toString());
 
-    qDebug() << ip << " : " << type;
+    qDebug() << type;
 
     switch(type) {
     case Chat_Login:
+    {
+        auto parts = name.split(u',');
+
+        QString name = QString(parts[0]);
+        QString id = QString(parts[1]);
+
         foreach(auto item, ui->clientTreeWidget->findItems(name, Qt::MatchFixedString, 1)) {
-            if(item->text(0) != "On") {
-                item->setText(0, "On");
-                clientSocketHash[name] = clientConnection;
-                clientNameHash[port] = name;
-                item->setIcon(0, QIcon(":/images/yellowlight.png"));
+            if(item->text(2) == id){
+                if(item->text(0) != "On") {
+                    item->setText(0, "On");
+                    clientSocketHash[name] = clientConnection;
+                    clientNameHash[port] = name;
+                    item->setIcon(0, QIcon(":/images/yellowlight.png"));
+                }
+                return;
             }
-            return;
         }
+
         clientConnection->disconnectFromHost(); //고객리스트에 없는 이름이면 연결 해제
         break;
+    }
 
     case Chat_In:
+    {
+        auto parts = name.split(u',');
+
+        QString name = QString(parts[0]);
+        QString id = QString(parts[1]);
+
         foreach(auto item, ui->clientTreeWidget->findItems(name, Qt::MatchFixedString, 1)) {
-            if(item->text(0) != "Chat") {
-                item->setText(0, "Chat");
-                item->setIcon(0, QIcon(":/images/greenlight.png"));
-                //clientNameHash[port] = name;
-                QTreeWidgetItem* chatItem = new QTreeWidgetItem(ui->chattingTreeWidget);
-                chatItem->setText(1,clientNameHash[port]);
-                chatItem->setIcon(0, QIcon(":/images/greenlight.png"));
-                chatItem->setText(2, item->text(2));
+            if(item->text(2) == id){
+                if(item->text(0) != "Chat") {
+                    item->setText(0, "Chat");
+                    item->setIcon(0, QIcon(":/images/greenlight.png"));
+                    QTreeWidgetItem* chatItem = new QTreeWidgetItem(ui->chattingTreeWidget);
+                    chatItem->setText(1,clientNameHash[port]);
+                    chatItem->setIcon(0, QIcon(":/images/greenlight.png"));
+                    chatItem->setText(2, item->text(2));
+                }
             }
         }
         break;
-
+    }
     case Chat_Talk: {
+        qDebug("Server ChatTalk On");
         foreach(QTcpSocket *sock, clientSocketHash.values()) {
             if(clientNameHash.contains(sock->peerPort()) && sock != clientConnection) { //포트가 있고, 내꺼가 아니면
-
                 foreach(auto item, ui->clientTreeWidget->findItems(clientNameHash[sock->peerPort()], Qt::MatchFixedString, 1)) {
                     if(item->text(0) =="Chat"){
                         QByteArray sendArray;
@@ -167,7 +184,6 @@ void ChatServerForm::receiveData( )
                 }
             }
         }
-
         QTreeWidgetItem* item = new QTreeWidgetItem(ui->messageTreeWidget);
         item->setText(0, ip);
         item->setText(1, QString::number(port));
@@ -210,6 +226,7 @@ void ChatServerForm::receiveData( )
         foreach(auto item, ui->chattingTreeWidget->findItems(name, Qt::MatchFixedString, 1)) {
             ui->chattingTreeWidget->takeTopLevelItem(ui->chattingTreeWidget->indexOfTopLevelItem(item));
         }
+
         break;
 
     default:

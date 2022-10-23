@@ -55,7 +55,7 @@ Chatting_Client::Chatting_Client(QWidget *parent) :
     ui->logoutButton->setDisabled(true);
 
     // 채팅을 위한 소켓
-    clientSocket = new QTcpSocket(this);			// 클라이언트 소켓 생성
+    clientSocket = new QTcpSocket(this);         // 클라이언트 소켓 생성
     connect(clientSocket, &QAbstractSocket::errorOccurred,
             [=]{ qDebug( ) << clientSocket->errorString( ); });
     connect(clientSocket, SIGNAL(readyRead( )), SLOT(receiveData( )));
@@ -79,7 +79,11 @@ Chatting_Client::Chatting_Client(QWidget *parent) :
             clientSocket->connectToHost(ui->serverAddress->text( ),
                                         ui->serverPort->text( ).toInt( ));
             clientSocket->waitForConnected();       //접속 끝날때 까지 대기
-            sendProtocol(Chat_Login, ui->name->text().toStdString().data());        //서버쪽에서 이름을 받아,
+
+            //sendProtocol(Chat_Login, ui->name->text().toStdString().data());
+            sendProtocol(Chat_Login, (ui->name->text().toStdString()+","+
+                                      ui->idLineEdit->text().toStdString()).data() );        //서버쪽에서 이름을 받아,
+
             ui->connectButton->setText(tr("Chat in"));
             ui->name->setReadOnly(true);
             ui->logoutButton->setEnabled(true);
@@ -88,7 +92,10 @@ Chatting_Client::Chatting_Client(QWidget *parent) :
             ui->serverPort->setEnabled(false);
         }
         else if(ui->connectButton->text() == tr("Chat in"))  {
-            sendProtocol(Chat_In, ui->name->text().toStdString().data());
+            //sendProtocol(Chat_In, ui->name->text().toStdString().data());
+            sendProtocol(Chat_In, (ui->name->text().toStdString()+","+
+                                      ui->idLineEdit->text().toStdString()).data() );        //서버쪽에서 이름을 받아,
+
             ui->connectButton->setText(tr("Chat Out"));
             ui->inputLine->setEnabled(true);
             ui->sentButton->setEnabled(true);
@@ -96,7 +103,10 @@ Chatting_Client::Chatting_Client(QWidget *parent) :
             ui->stateLineEdit->setText(tr("Active"));
         }
         else if(ui->connectButton->text() == tr("Chat Out"))  {
-            sendProtocol(Chat_Out, ui->name->text().toStdString().data());
+            //sendProtocol(Chat_Out, ui->name->text().toStdString().data());
+            sendProtocol(Chat_Out, (ui->name->text().toStdString()+","+
+                                      ui->idLineEdit->text().toStdString()).data() );        //서버쪽에서 이름을 받아,
+
             ui->connectButton->setText(tr("Chat in"));
             ui->inputLine->setDisabled(true);
             ui->sentButton->setDisabled(true);
@@ -120,7 +130,9 @@ Chatting_Client::~Chatting_Client()
 // 창이 닫힐 때 서버에 연결 접속 메시지를 보내고 종료
 void Chatting_Client::closeEvent(QCloseEvent*)
 {
-    sendProtocol(Chat_LogOut, ui->name->text().toStdString().data());
+    sendProtocol(Chat_LogOut, (ui->name->text().toStdString()+","+
+                              ui->idLineEdit->text().toStdString()).data() );
+    //sendProtocol(Chat_LogOut, ui->name->text().toStdString().data());
     clientSocket->disconnectFromHost();
     if(clientSocket->state() != QAbstractSocket::UnconnectedState)
         clientSocket->waitForDisconnected();
@@ -129,6 +141,7 @@ void Chatting_Client::closeEvent(QCloseEvent*)
 //데이터를 받을 때
 void Chatting_Client::receiveData( )
 {
+    qDebug("클라이 receiveData");
     QTcpSocket *clientSocket = dynamic_cast<QTcpSocket *>(sender( ));
     if (clientSocket->bytesAvailable( ) > BLOCK_SIZE) return;
     QByteArray bytearray = clientSocket->read(BLOCK_SIZE);
@@ -286,4 +299,3 @@ void Chatting_Client::on_logoutButton_clicked()
     ui->serverAddress->setEnabled(true);
     ui->serverPort->setEnabled(true);
 }
-
