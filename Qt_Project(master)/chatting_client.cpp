@@ -272,7 +272,7 @@ void Chatting_Client::sendFile() // Open the file and get the file name (includi
         loadSize = 1024; // The size of data sent each time
 
         QDataStream out(&outBlock, QIODevice::WriteOnly);
-        out << qint64(0) << qint64(0) << filename << ui->name->text();
+        out << qint64(0) << qint64(0) << filename << ui->name->text() << ui->idLineEdit->text();
 
         totalSize += outBlock.size(); // The total size is the file size plus the size of the file name and other information
         byteToWrite += outBlock.size();

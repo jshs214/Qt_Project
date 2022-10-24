@@ -29,12 +29,6 @@
     </property>
     <item>
      <widget class="QMdiArea" name="mdiArea">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
       <property name="viewMode">
        <enum>QMdiArea::TabbedView</enum>
       </property>
@@ -85,8 +79,6 @@
    <addaction name="actionproduct"/>
    <addaction name="separator"/>
    <addaction name="actionOrder"/>
-   <addaction name="separator"/>
-   <addaction name="actionChatting"/>
    <addaction name="separator"/>
    <addaction name="actionChat"/>
    <addaction name="separator"/>

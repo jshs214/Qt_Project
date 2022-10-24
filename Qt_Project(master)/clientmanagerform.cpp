@@ -117,7 +117,6 @@ void ClientManagerForm::on_searchPushButton_clicked()
             QString name = c->getName();
             QString number = c->getPhoneNumber();
             QString address = c->getAddress();
-
         }
     }
 }

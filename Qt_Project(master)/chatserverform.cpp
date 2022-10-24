@@ -116,7 +116,7 @@ void ChatServerForm::receiveData( )
 
     ui->ipLineEdit->setText(clientConnection->localAddress().toString());
 
-    qDebug() << type;
+    //qDebug() << type;
 
     switch(type) {
     case Chat_Login:
@@ -226,7 +226,7 @@ void ChatServerForm::receiveData( )
     case Chat_LogOut:
     {
         QString id = clientPortIDHash[port];
-        qDebug()<<id;
+        //qDebug()<<id;
         foreach(auto item, ui->clientTreeWidget->findItems(name, Qt::MatchContains, 1)) {
             if(item->text(2) == id){
             if(item->text(0) != "Off") {
@@ -355,7 +355,7 @@ void ChatServerForm::readClient()
 {
     qDebug("Receiving file ...");
     QTcpSocket* receivedSocket = dynamic_cast<QTcpSocket *>(sender( ));
-    QString filename, name;
+    QString filename, name, id;
 
     if (byteReceived == 0) {        // 파일 전송 시작 : 파일에 대한 정보를 이용해서 QFile 객체 생성
         progressDialog->reset();
@@ -363,16 +363,17 @@ void ChatServerForm::readClient()
 
         QString ip = receivedSocket->peerAddress().toString();
         quint16 port = receivedSocket->peerPort();
+
         qDebug() << ip << " : " << port;
 
         QDataStream in(receivedSocket);
-        in >> totalSize >> byteReceived >> filename >> name;
+        in >> totalSize >> byteReceived >> filename >> name >> id;
         progressDialog->setMaximum(totalSize);
 
         QTreeWidgetItem* item = new QTreeWidgetItem(ui->messageTreeWidget);
         item->setText(0, ip);
         item->setText(1, QString::number(port));
-        item->setText(2, QString::number(clientIDHash[name]));
+        item->setText(2,  id);
         item->setText(3, name);
         item->setText(4, filename);
         item->setText(5, QDateTime::currentDateTime().toString());

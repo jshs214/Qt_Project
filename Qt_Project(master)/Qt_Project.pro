@@ -19,8 +19,7 @@ SOURCES += \
     orderitem.cpp \
     ordermanagerform.cpp \
     productitem.cpp \
-    productmanagerform.cpp \
-    testform.cpp
+    productmanagerform.cpp
 
 HEADERS += \
     Chat_Status.h \
@@ -33,8 +32,7 @@ HEADERS += \
     orderitem.h \
     ordermanagerform.h \
     productitem.h \
-    productmanagerform.h \
-    testform.h
+    productmanagerform.h
 
 FORMS += \
     chatserverform.ui \
@@ -42,8 +40,7 @@ FORMS += \
     clientmanagerform.ui \
     mainwindow.ui \
     ordermanagerform.ui \
-    productmanagerform.ui \
-    testform.ui
+    productmanagerform.ui
 
 TRANSLATIONS += \
     Qt_Project_ko_KR.ts
