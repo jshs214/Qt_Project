@@ -114,15 +114,14 @@ void ChatServerForm::receiveData( )
 
     QString ip = clientConnection->peerAddress().toString();
     quint16 port = clientConnection->peerPort();
-    QString name = QString::fromStdString(data);
+    QString receiveData = QString::fromStdString(data);
 
     ui->ipLineEdit->setText(clientConnection->localAddress().toString());
-
 
     switch(type) {
     case Chat_Login:
     {
-        auto parts = name.split(u',');
+        auto parts = receiveData.split(u',');
 
         QString name = QString(parts[0]);
         QString id = QString(parts[1]);
@@ -135,18 +134,19 @@ void ChatServerForm::receiveData( )
                     clientNameHash[port] = name;
                     clientPortIDHash[port]=id;
                     item->setIcon(0, QIcon(":/images/yellowlight.png"));
+                    sendLogInOut(clientConnection, "true");
                 }
                 return;
             }
         }
+        sendLogInOut(clientConnection, "false");
 
-        clientConnection->disconnectFromHost(); //고객리스트에 없는 이름이면 연결 해제
         break;
     }
 
     case Chat_In:
     {
-        auto parts = name.split(u',');
+        auto parts = receiveData.split(u',');
 
         QString name = QString(parts[0]);
         QString id = QString(parts[1]);
@@ -160,9 +160,13 @@ void ChatServerForm::receiveData( )
                     chatItem->setText(1,clientNameHash[port]);
                     chatItem->setIcon(0, QIcon(":/images/greenlight.png"));
                     chatItem->setText(2, item->text(2));
+
+
                 }
             }
         }
+        /* Chat_List로 현재 채팅방 참여인원 전달 */
+        sendChatList();
         break;
     }
     case Chat_Talk: {
@@ -177,8 +181,9 @@ void ChatServerForm::receiveData( )
                         out << Chat_Talk;
                         sendArray.append("<font color=lightsteelblue>");
                         sendArray.append(clientNameHash[port].toStdString().data());
+                        sendArray.append("("+clientPortIDHash[port].toStdString()+")");
                         sendArray.append("</font> : ");
-                        sendArray.append(name.toStdString().data());
+                        sendArray.append(receiveData.toStdString().data());
                         sock->write(sendArray);
                     }
 
@@ -195,8 +200,8 @@ void ChatServerForm::receiveData( )
         item->setToolTip(4, QString(data));
         ui->messageTreeWidget->addTopLevelItem(item);
 
-        ui->message->append("<font color=lightsteelblue>" +
-                            clientNameHash[port] + "</font> : " + name);
+        ui->message->append("<font color=lightsteelblue>" + clientNameHash[port] + "(" + clientPortIDHash[port] + ")"
+                            + "</font> : " + receiveData);
 
         for(int i = 0; i < ui->messageTreeWidget->columnCount(); i++)
             ui->messageTreeWidget->resizeColumnToContents(i);
@@ -207,11 +212,11 @@ void ChatServerForm::receiveData( )
 
     case Chat_Out:
     {
-        auto parts = name.split(u',');
+        auto parts = receiveData.split(u',');
 
         QString name = QString(parts[0]);
         QString id = QString(parts[1]);
-        foreach(auto item, ui->clientTreeWidget->findItems(name, Qt::MatchContains, 1)) {
+        foreach(auto item, ui->clientTreeWidget->findItems(name, Qt::MatchFixedString, 1)) {
             if(item->text(2) == id){
                 if(item->text(0) != "On") {
                     item->setText(0, "On");
@@ -223,13 +228,17 @@ void ChatServerForm::receiveData( )
         foreach(auto item, ui->chattingTreeWidget->findItems(id, Qt::MatchFixedString, 2)) {
             ui->chattingTreeWidget->takeTopLevelItem(ui->chattingTreeWidget->indexOfTopLevelItem(item));
         }
+
+        /* Chat_List로 현재 채팅방 참여인원 전달 */
+        sendChatList();
+
         break;
     }
     case Chat_LogOut:
     {
         QString id = clientPortIDHash[port];
         //qDebug()<<id;
-        foreach(auto item, ui->clientTreeWidget->findItems(name, Qt::MatchContains, 1)) {
+        foreach(auto item, ui->clientTreeWidget->findItems(receiveData, Qt::MatchFixedString, 1)) {
             if(item->text(2) == id){
                 if(item->text(0) != "Off") {
                     item->setText(0, "Off");
@@ -237,13 +246,14 @@ void ChatServerForm::receiveData( )
                 }
             }
             clientSocketHash.remove(id);
-            clientNameHash.remove(port);    //
+            clientNameHash.remove(port);
+            clientPortIDHash.remove(port);
         }
 
         foreach(auto item, ui->chattingTreeWidget->findItems(id, Qt::MatchFixedString, 2)) {
             ui->chattingTreeWidget->takeTopLevelItem(ui->chattingTreeWidget->indexOfTopLevelItem(item));
         }
-
+        sendChatList();
         break;
     }
     default:
@@ -255,9 +265,8 @@ void ChatServerForm::removeClient()
 {
     QTcpSocket *clientConnection = dynamic_cast<QTcpSocket *>(sender( ));
     if(clientConnection != nullptr){
-        //QString name = clientNameHash[clientConnection->peerPort()];
         QString id =  clientPortIDHash[clientConnection->peerPort()];
-        foreach(auto item, ui->clientTreeWidget->findItems(id, Qt::MatchContains, 2)) {
+        foreach(auto item, ui->clientTreeWidget->findItems(id, Qt::MatchFixedString, 2)) {
             item->setText(0, "Off");
             item->setIcon(0, QIcon(":/images/redlight.png"));
         }
@@ -276,7 +285,7 @@ void ChatServerForm::addClient(int id, QString name)    //고객관리창에서 
     item->setText(2, QString::number(id));
 
     ui->clientTreeWidget->addTopLevelItem(item);
-    clientIDHash[name] = id;
+
 }
 
 void ChatServerForm::remClient(int id)    //고객관리창에서 데이터 삭제 시 활동 중리스트 삭제
@@ -318,8 +327,17 @@ void ChatServerForm::kickOut()
         ui->chattingTreeWidget->takeTopLevelItem(ui->chattingTreeWidget->indexOfTopLevelItem(item));
     }
 
-
 }
+
+void ChatServerForm::sendLogInOut(QTcpSocket* sock , const char* data)
+{
+    QByteArray dataArray;           // 소켓으로 보낼 데이터를 채우고
+    QDataStream out(&dataArray, QIODevice::WriteOnly);
+    out << Chat_Login;
+    out.writeRawData(data, 1020);
+    sock->write(dataArray);
+}
+
 /* 클라이언트 초대하기 */
 void ChatServerForm::inviteClient()
 {
@@ -341,6 +359,7 @@ void ChatServerForm::inviteClient()
     chatItem->setText(1,name);
     chatItem->setIcon(0, QIcon(":/images/greenlight.png"));
     chatItem->setText(2,id);
+
 }
 
 /* 파일 전송을 위한 소켓 생성 */
@@ -420,7 +439,6 @@ void ChatServerForm::readClient()
 
 void ChatServerForm::on_sendButton_clicked()
 {
-
     QString str = ui->inputLineEdit->text( );
     if(str.length( )) {
         ui->message->append("<font color=red>Manager</font> : " + str);
@@ -439,9 +457,7 @@ void ChatServerForm::on_sendButton_clicked()
                     sock->write(sendArray);
                     //qDebug() << sock->peerPort();
                 }
-
             }
-
         }
     }
 
@@ -462,7 +478,27 @@ void ChatServerForm::on_sendButton_clicked()
 
     ui->inputLineEdit->clear();
 }
+void ChatServerForm::sendChatList()
+{
+    QByteArray dataArray;           // 소켓으로 보낼 데이터를 채우고
+    QDataStream out(&dataArray, QIODevice::WriteOnly);
+    out << Chat_List;
 
+    foreach(auto item, ui->clientTreeWidget->findItems("Chat", Qt::MatchFixedString, 0)) {
+        QString name = item->text(1);
+        QString id = item->text(2);
+        dataArray.append(name.toStdString()+"("+id.toStdString()+")");
+        dataArray.append(",");
+
+    }
+    foreach(QTcpSocket *sock, clientSocketHash.values()) {
+        foreach(auto item, ui->clientTreeWidget->findItems(clientPortIDHash[sock->peerPort()], Qt::MatchFixedString, 2)) {
+            Q_UNUSED(item);
+                sock->write(dataArray);
+
+        }
+    }
+}
 
 
 

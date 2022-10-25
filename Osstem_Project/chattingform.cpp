@@ -57,14 +57,13 @@ ChattingForm::ChattingForm(QWidget *parent) :
     // 채팅을 위한 소켓
     clientSocket = new QTcpSocket(this);         // 클라이언트 소켓 생성
     connect(clientSocket, &QAbstractSocket::errorOccurred,
-            [=]{ qDebug( ) << clientSocket->errorString( ); });
+            [=]{ qDebug( ) <<  clientSocket->errorString( ); });
     connect(clientSocket, SIGNAL(readyRead( )), SLOT(receiveData( )));
     connect(clientSocket, SIGNAL(disconnected( )), SLOT(disconnect( )));
 
     // 파일 전송을 위한 소켓
     fileClient = new QTcpSocket(this);
     connect(fileClient, SIGNAL(bytesWritten(qint64)), SLOT(goOnSend(qint64)));
-    //    connect(fileClient, SIGNAL(disconnected( )), fileClient, SLOT(deletelater( )));
 
     progressDialog = new QProgressDialog(0);
     progressDialog->setAutoClose(true);
@@ -77,21 +76,13 @@ ChattingForm::ChattingForm(QWidget *parent) :
                                         ui->serverPort->text( ).toInt( ));
             clientSocket->waitForConnected();       //접속 끝날때 까지 대기
 
-            //sendProtocol(Chat_Login, ui->name->text().toStdString().data());
             sendProtocol(Chat_Login, (ui->name->text().toStdString()+","+
                                       ui->idLineEdit->text().toStdString()).data() );        //서버쪽에서 이름을 받아,
 
-            ui->connectButton->setText(tr("Chat in"));
-            ui->name->setReadOnly(true);
-            ui->logoutButton->setEnabled(true);
-            ui->stateLineEdit->setText(tr("Successed LogIn"));
-            ui->serverAddress->setEnabled(false);
-            ui->serverPort->setEnabled(false);
         }
         else if(ui->connectButton->text() == tr("Chat in"))  {
-            //sendProtocol(Chat_In, ui->name->text().toStdString().data());
             sendProtocol(Chat_In, (ui->name->text().toStdString()+","+
-                                      ui->idLineEdit->text().toStdString()).data() );        //서버쪽에서 이름을 받아,
+                                   ui->idLineEdit->text().toStdString()).data() );        //서버쪽에서 이름을 받아,
 
             ui->connectButton->setText(tr("Chat Out"));
             ui->inputLine->setEnabled(true);
@@ -100,9 +91,8 @@ ChattingForm::ChattingForm(QWidget *parent) :
             ui->stateLineEdit->setText(tr("Active"));
         }
         else if(ui->connectButton->text() == tr("Chat Out"))  {
-            //sendProtocol(Chat_Out, ui->name->text().toStdString().data());
             sendProtocol(Chat_Out, (ui->name->text().toStdString()+","+
-                                      ui->idLineEdit->text().toStdString()).data() );        //서버쪽에서 이름을 받아,
+                                    ui->idLineEdit->text().toStdString()).data() );        //서버쪽에서 이름을 받아,
 
             ui->connectButton->setText(tr("Chat in"));
             ui->inputLine->setDisabled(true);
@@ -127,8 +117,10 @@ ChattingForm::~ChattingForm()
 // 창이 닫힐 때 서버에 연결 접속 메시지를 보내고 종료
 void ChattingForm::closeEvent(QCloseEvent*)
 {
+    if(ui->connectButton->text() == "Log In")   return;
     sendProtocol(Chat_LogOut, (ui->name->text().toStdString()+","+
-                              ui->idLineEdit->text().toStdString()).data() );
+                               ui->idLineEdit->text().toStdString()).data() );
+
     //sendProtocol(Chat_LogOut, ui->name->text().toStdString().data());
     clientSocket->disconnectFromHost();
     if(clientSocket->state() != QAbstractSocket::UnconnectedState)
@@ -152,6 +144,22 @@ void ChattingForm::receiveData( )
     in.readRawData(data, 1020);     //실제 데이터
 
     switch(type) {
+    case Chat_Login:
+        if(QString(data) == "true")
+        {
+            ui->connectButton->setText(tr("Chat in"));
+            ui->name->setReadOnly(true);
+            ui->logoutButton->setEnabled(true);
+            ui->stateLineEdit->setText(tr("Successed LogIn"));
+            ui->serverAddress->setEnabled(false);
+            ui->serverPort->setEnabled(false);
+        }
+        else
+        {
+            QMessageBox::critical(this, tr("Error"), \
+                                  tr("Failed Login"));
+        }
+        break;
     case Chat_Talk:     //타입이 Talk
         ui->message->append(QString(data));     //메시지 화면에 표시
         ui->inputLine->setEnabled(true);        //버튼 상태 변경
@@ -177,7 +185,23 @@ void ChattingForm::receiveData( )
         ui->connectButton->setText("Chat Out");
         ui->name->setReadOnly(true);
         ui->stateLineEdit->setText(tr("Active"));
+
         break;
+    case Chat_List:
+    {
+        ui->stateTreeWidget->clear();
+        QList<QString> row = QString(data).split(",");
+
+        QString receiveData = QString::fromStdString(data);
+
+        foreach (auto v,row) {
+            QTreeWidgetItem* item = new QTreeWidgetItem(ui->stateTreeWidget);
+            item->setText(0,v);
+            ui->stateTreeWidget->addTopLevelItem(item);
+        }
+
+        break;
+    }
     default:
         break;
     };
@@ -294,4 +318,5 @@ void ChattingForm::on_logoutButton_clicked()
     ui->stateLineEdit->setText("");
     ui->serverAddress->setEnabled(true);
     ui->serverPort->setEnabled(true);
+    ui->stateTreeWidget->clear();
 }

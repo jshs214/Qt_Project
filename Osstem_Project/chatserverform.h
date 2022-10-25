@@ -37,7 +37,6 @@ private:
     QHash<quint16, QString> clientNameHash;     // port, name
     QHash<quint16, QString> clientPortIDHash;     // port, id
     QHash<QString, QTcpSocket*> clientSocketHash;// id, socket
-    QHash<QString, int> clientIDHash;           // name, id
 
     QMenu* menu;
     QFile* file;
@@ -47,7 +46,8 @@ private:
     QByteArray inBlock;
     LogThread* logThread;
 
-
+    void sendLogInOut(QTcpSocket* sock , const char* data);
+    void sendChatList();
 private slots:
     void acceptConnection();                /* 파일 서버 */
     void readClient();
@@ -60,6 +60,7 @@ private slots:
     void on_clientTreeWidget_customContextMenuRequested(const QPoint &pos);
     void remClient(int);
     void on_sendButton_clicked();
+
 };
 
 #endif // CHATSERVERFORM_H

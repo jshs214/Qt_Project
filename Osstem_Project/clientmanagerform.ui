@@ -36,7 +36,7 @@
         </layout>
        </item>
        <item>
-        <widget class="QPushButton" name="ClientManagement">
+        <widget class="QPushButton" name="statePushButton">
          <property name="text">
           <string>ClientInfoManager</string>
          </property>

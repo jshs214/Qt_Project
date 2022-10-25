@@ -11,29 +11,30 @@ ProductManagerForm::ProductManagerForm(QWidget *parent) :
     ui(new Ui::ProductManagerForm)
 {
     ui->setupUi(this);
-
+    /* ContextMenu의 remove 액션, 리스트의 데이터 삭제 */
     QAction* removeAction = new QAction(tr("&Remove"));
     connect(removeAction, SIGNAL(triggered()), SLOT(removeItem()));
-
     menu = new QMenu;
     menu->addAction(removeAction);
     ui->treeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+
     connect(ui->treeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu(QPoint)));
 
     connect(ui->searchLineEdit, SIGNAL(returnPressed()),
             this, SLOT(on_searchPushButton_clicked()));
-
+    /* 가격 입력 시 0~99999999, 재고 입력 시 0~9999 숫자만 받도록 */
     ui->priceLineEdit->setValidator( new QIntValidator(0, 99999999, this) );    //숫자만 받도록
     ui->stockLineEdit->setValidator( new QIntValidator(0, 9999, this) );        //숫자만 받도록
 
 
 }
+/* 파일의 데이터 입력하는 메서드 */
 void ProductManagerForm::loadData()
 {
     QFile file("productlist.txt");
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
         return;
-
+    /* 파일의 데이터를 ','로 파싱해서 입력 */
     QTextStream in(&file);
     while (!in.atEnd()) {
         QString line = in.readLine();
@@ -47,6 +48,8 @@ void ProductManagerForm::loadData()
     }
     file.close( );
 }
+
+/* 소멸자에서 파일 출력 */
 ProductManagerForm::~ProductManagerForm()
 {
     delete ui;
@@ -55,6 +58,7 @@ ProductManagerForm::~ProductManagerForm()
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
         return;
 
+    /* 파일의 데이터를 ','로 파싱해서 저장 */
     QTextStream out(&file);
     for (const auto& v : productList) {
         ProductItem* p = v;
@@ -65,9 +69,10 @@ ProductManagerForm::~ProductManagerForm()
     file.close( );
 }
 
+/* ID(키 값) 생성 메서드*/
 int ProductManagerForm::makeId( )
 {
-    if(productList.size( ) == 0) {
+    if(productList.size( ) == 0) {      // ID가 중복되면 +1
         return 5000;
     } else {
         auto id = productList.lastKey();
@@ -75,67 +80,10 @@ int ProductManagerForm::makeId( )
     }
 }
 
-void ProductManagerForm::removeItem()
-{
-    QTreeWidgetItem* item = ui->treeWidget->currentItem();
-    if(item != nullptr) {
-        productList.remove(item->text(0).toInt());
-        ui->treeWidget->takeTopLevelItem(ui->treeWidget->indexOfTopLevelItem(item));
-        ui->treeWidget->update();
-    }
-}
-
-void ProductManagerForm::showContextMenu(const QPoint &pos)
-{
-    if(ui->treeWidget->currentItem() == nullptr)    return;
-    QPoint globalPos = ui->treeWidget->mapToGlobal(pos);
-    menu->exec(globalPos);
-}
-
-void ProductManagerForm::on_searchPushButton_clicked()
-{
-    ui->productInfoLabel->setText("Search Info");
-
-    int i = ui->searchComboBox->currentIndex();
-    for (const auto& v : productList) {
-        ProductItem* p = v;
-        p->setHidden(true); //검색 시, 기존 고객리스트 히든
-    }
-    auto flag = (i)? Qt::MatchCaseSensitive|Qt::MatchContains
-                   : Qt::MatchCaseSensitive;
-    {
-        auto items = ui->treeWidget->findItems(ui->searchLineEdit->text(), flag, i);
-        foreach(auto i, items) {
-            i->setHidden(false);
-            ProductItem* p = static_cast<ProductItem*>(i);
-            p->id();
-            QString name = p->getName();
-            QString price = p->getPrice();
-            QString stock = p->getStock();
-
-        }
-    }
-}
-
-void ProductManagerForm::on_modifyPushButton_clicked()
-{
-    QTreeWidgetItem* item = ui->treeWidget->currentItem();
-    if(item != nullptr) {
-        int key = item->text(0).toInt();
-        ProductItem* p = productList[key];
-        QString name, price, stock;
-        name = ui->nameLineEdit->text();
-        price = ui->priceLineEdit->text();
-        stock = ui->stockLineEdit->text();
-        p->setName(name);
-        p->setPrice(price);
-        p->setStock(stock);
-        productList[key] = p;
-    }
-}
-
+/* 제품정보추가를 위한 슬롯 */
 void ProductManagerForm::on_addPushButton_clicked()
 {
+    /* 검색 결과에서 정보 추가 시 경고메시지 */
     if(ui->productInfoLabel->text() != "ProductInfoManager")
     {
         QMessageBox::warning(this, "Error",
@@ -147,6 +95,8 @@ void ProductManagerForm::on_addPushButton_clicked()
     name = ui->nameLineEdit->text();
     price = ui->priceLineEdit->text();
     stock = ui->stockLineEdit->text();
+
+    /* 제품의 데이터를 다 입력하면 제품 정보추가 */
     if(name.length() && price.length() && stock.length()) {
         ProductItem* p = new ProductItem(id, name, price, stock);
         productList.insert(id, p);
@@ -158,6 +108,76 @@ void ProductManagerForm::on_addPushButton_clicked()
     }
 }
 
+/* 제품정보변경을 위한 슬롯 */
+void ProductManagerForm::on_modifyPushButton_clicked()
+{
+    QTreeWidgetItem* item = ui->treeWidget->currentItem();
+    /* 변경할 제품의 데이터를 입력한 데이터로 정보 수정 */
+    if(item != nullptr) {
+        int key = item->text(0).toInt();    //id 값을 가져와
+        ProductItem* p = productList[key];
+        QString name, price, stock;
+
+        name = ui->nameLineEdit->text();
+        price = ui->priceLineEdit->text();
+        stock = ui->stockLineEdit->text();
+        p->setName(name);
+        p->setPrice(price);
+        p->setStock(stock);
+        productList[key] = p;
+    }
+}
+
+/* 제품정보검색을 위한 슬롯 */
+void ProductManagerForm::on_searchPushButton_clicked()
+{
+    ui->productInfoLabel->setText("Search Info");
+
+    /* 모든 제품 데이터 hidden */
+    for (const auto& v : productList) {
+        ProductItem* p = v;
+        p->setHidden(true);
+    }
+
+    int i = ui->searchComboBox->currentIndex(); //무엇으로 검색할지 콤보박스의 인덱스를 가져옴
+    {   /* 검색과 일치하거나 포함하는 문자열이 있으면 hidden(false) */
+        auto items = ui->treeWidget->findItems(ui->searchLineEdit->text(), Qt::MatchContains, i);
+        foreach(auto i, items) {
+            i->setHidden(false);    //검색된 리스트만 출력되게
+        }
+    }
+}
+
+/* 검색결과 창에서 제품정보관리로 돌아오는 슬롯 */
+void ProductManagerForm::on_statePushButton_clicked()
+{
+    ui->productInfoLabel->setText("ProductInfoManager");
+    for (const auto& v : productList) {
+        ProductItem* p = v;
+        p->setHidden(false);
+    }
+}
+
+/* ContextMenu 슬롯 */
+void ProductManagerForm::showContextMenu(const QPoint &pos)
+{
+    if(ui->treeWidget->currentItem() == nullptr)    return;
+    QPoint globalPos = ui->treeWidget->mapToGlobal(pos);
+    menu->exec(globalPos);
+}
+
+/* 제품정보의 데이터(트리위젯)의 리스트 제거 슬롯 */
+void ProductManagerForm::removeItem()
+{   /* 선택된 정보의 리스트를 트리위젯에서 제거 */
+    QTreeWidgetItem* item = ui->treeWidget->currentItem();
+    if(item != nullptr) {   //예외처리
+        productList.remove(item->text(0).toInt());
+        ui->treeWidget->takeTopLevelItem(ui->treeWidget->indexOfTopLevelItem(item));
+        ui->treeWidget->update();
+    }
+}
+
+/* 등록된 제품정보 클릭 시 관련정보 출력 슬롯*/
 void ProductManagerForm::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
 {
     Q_UNUSED(column);
@@ -167,7 +187,7 @@ void ProductManagerForm::on_treeWidget_itemClicked(QTreeWidgetItem *item, int co
     ui->stockLineEdit->setText(item->text(3));
 }
 
-
+/* Order에서 제품 id나 제품명을 받아오는 슬롯*/
 void ProductManagerForm::receiveProductName(QString str)
 {
     QMap<int,ProductItem*> searchList;
@@ -198,29 +218,36 @@ void ProductManagerForm::receiveProductName(QString str)
 
     for(const auto&v : searchList){
         ProductItem* p = v;
+        /* id나 제품명에 해당하는 데이터를 보내주는 시그널*/
         emit productDataSent(p);
     }
 }
 
+/* Order에서 주문추가 시, 재고반영을 위한 슬롯 */
 void ProductManagerForm::receiveAddStock(int key, QString Instock) //추가 시 재고 변경
 {
     ProductItem* p = productList[key];
-    if(p->getStock().toInt() < Instock.toInt()) {   // 재고부족을 위한 메시지 박스
+    /* 주문 시, 재고부족을 위한 메시지 박스 */
+    if(p->getStock().toInt() < Instock.toInt()) {
         QMessageBox::information(this, "Sold Out",
                                  QString("재고 부족\n %0개 까지 주문 가능합니다.").arg(p->getStock()));
         return; }
+
     QString stock = QString::number(p->getStock().toInt() - Instock.toInt() );
     p->setStock(stock);
 
 }
 
+/* Order에서 주문변경 시, 재고반영을 위한 슬롯 */
 void ProductManagerForm::receiveModStock(int key, QString upstock, QString stock)
-{                                                  //업데이트할 수량, 기존 수량
+{
     ProductItem* p = productList[key];
     QString result = QString::number(p->getStock().toInt() + stock.toInt() - upstock.toInt() );
     p->setStock(result);
 
 }
+
+/* Order에서 주문내역제거 시, 재고반영을 위한 슬롯 */
 void ProductManagerForm::receiveDelStock(int key, QString instock)  //지울 때 재고추가를 위한 슬롯
 {
     ProductItem* p = productList[key];
@@ -229,7 +256,9 @@ void ProductManagerForm::receiveDelStock(int key, QString instock)  //지울 때
     p->setStock(result);
 
 }
-void ProductManagerForm::receiveProductKey(int key) //키값에 해당하는 리스트 행 시그널.
+
+/* 제품 id 값을 받아오는 슬롯 */
+void ProductManagerForm::receiveProductKey(int key)
 {
     ProductItem* p = productList[key];
 
@@ -238,11 +267,12 @@ void ProductManagerForm::receiveProductKey(int key) //키값에 해당하는 리
     QString price = p->getPrice();
     QString stock = p->getStock();
     ProductItem* item = new ProductItem(id, name, price, stock);
-
+    /* id에 해당하는 데이터를 보내주는 시그널*/
     emit clickProductSent(item);
 
 }
 
+/* 버튼 클릭 시 입력 값 초기화 하는 슬롯 */
 void ProductManagerForm::on_clearbutton_clicked()
 {
     ui->idLineEdit->clear();
@@ -253,12 +283,4 @@ void ProductManagerForm::on_clearbutton_clicked()
 }
 
 
-void ProductManagerForm::on_ProductManagement_clicked()
-{
-    ui->productInfoLabel->setText("ProductInfoManager");
-    for (const auto& v : productList) {
-        ProductItem* p = v;
-        p->setHidden(false);
-    }
-}
 

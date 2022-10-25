@@ -19,16 +19,17 @@ class ProductManagerForm : public QWidget
 public:
     explicit ProductManagerForm(QWidget *parent = nullptr);
     ~ProductManagerForm();
-    void loadData();
+    void loadData();    /* 파일의 데이터 입력하는 메서드 */
 
 private slots:
-    /* QTreeWidget을 위한 슬롯 */
+    void on_addPushButton_clicked();        /* 제품정보추가를 위한 슬롯 */
+    void on_modifyPushButton_clicked();     /* 제품정보변경을 위한 슬롯 */
+    void on_searchPushButton_clicked();     /* 제품정보검색을 위한 슬롯 */
+    void on_statePushButton_clicked();      /* 검색결과 창에서 제품정보관리로 돌아오는 슬롯 */
+    void showContextMenu(const QPoint &);   /* ContextMenu 슬롯 */
+    void removeItem();      /* 제품정보의 데이터(트리위젯)의 리스트 제거 슬롯 */
+
     void on_treeWidget_itemClicked(QTreeWidgetItem *item, int column);
-    void showContextMenu(const QPoint &);
-    void removeItem();              /* QAction을 위한 슬롯 */
-    void on_addPushButton_clicked();
-    void on_modifyPushButton_clicked();
-    void on_searchPushButton_clicked();
 
     void receiveProductName(QString);
     void receiveAddStock(int, QString);
@@ -36,9 +37,9 @@ private slots:
     void receiveDelStock(int, QString);
 
     void receiveProductKey(int);
-    void on_clearbutton_clicked();
+    void on_clearbutton_clicked();      /* 버튼 클릭 시 입력 값 초기화 하는 슬롯 */
 
-    void on_ProductManagement_clicked();
+
 
 private:
     int makeId();

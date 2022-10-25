@@ -98,6 +98,7 @@ int OrderManagerForm::makeId( )
 void OrderManagerForm::on_clientButton_clicked()
 {
     ui->clientTreeWidget->clear();  //버튼이 눌릴때마다 화면 초기화 (중복방지)
+    /* 입력된 고객의 정보(id, name)를 시그널로 보냄 */
     emit clientNameSent(ui->clientLineEdit->text());
 }
 
@@ -105,6 +106,7 @@ void OrderManagerForm::on_clientButton_clicked()
 void OrderManagerForm::on_productButton_clicked()
 {
     ui->productTreeWidget->clear();  //버튼이 눌릴때마다 화면 초기화 (중복방지)
+    /* 입력된 고객의 정보(id, name)를 시그널로 보냄 */
     emit productNameSent(ui->productLineEdit->text());
 }
 
@@ -171,6 +173,7 @@ void OrderManagerForm::on_clientTreeWidget_itemClicked(QTreeWidgetItem *item, in
     ui->cIdLineEdit->setText(CLineEdit);
     ui->addresslineEdit->setText(item->text(3));
 }
+
 /* 제품정보 데이터 클릭 시 입력되는 슬롯 */
 void OrderManagerForm::on_productTreeWidget_itemClicked(QTreeWidgetItem *item, int column)
 {
@@ -239,6 +242,7 @@ void OrderManagerForm::on_addPushButton_clicked()
         ui->pricelineEdit->clear();
     }
 }
+
 /* 주문정보검색을 위한 슬롯 */
 void OrderManagerForm::on_searchPushButton_clicked()
 {
@@ -251,7 +255,7 @@ void OrderManagerForm::on_searchPushButton_clicked()
     }
     int i = ui->searchComboBox->currentIndex(); //무엇으로 검색할지 콤보박스의 인덱스를 가져옴
 
-    {   /* 검색과 일치(id) 하거나 포함하는 문자열이 있으면 hidden(false) */
+    {   /* 검색과 일치하거나 포함하는 문자열이 있으면 hidden(false) */
         auto items = ui->treeWidget->findItems(ui->searchLineEdit->text(), Qt::MatchContains, i);
         foreach(auto i, items) {
             OrderItem* o = static_cast<OrderItem*>(i);
@@ -259,6 +263,7 @@ void OrderManagerForm::on_searchPushButton_clicked()
         }
     }
 }
+
 /* 검색결과 창에서 주문정보관리로 돌아오는 슬롯 */
 void OrderManagerForm::on_statePushButton_clicked()
 {
@@ -285,6 +290,7 @@ void OrderManagerForm::on_modifyPushButton_clicked()
         productTree_Stock = pItem->text(3);
         orderTree_Stock =item->text(3);
 
+        /* 변경할 제품의 입력한 데이터로 정보 수정 */
         client = ui->cIdLineEdit->text();
         product = ui->pIdLineEdit->text();
         stock = ui->stockLineEdit->text();
@@ -370,7 +376,8 @@ void OrderManagerForm::removeItem()
         ui->productTreeWidget->clear();
     }
 }
-/* 주문내역 클릭 시 관련정보 출력 슬롯*/
+
+/* 등록된 주문내역 클릭 시 관련정보 출력 슬롯*/
 void OrderManagerForm::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
 {
     Q_UNUSED(column);
@@ -392,6 +399,7 @@ void OrderManagerForm::on_treeWidget_itemClicked(QTreeWidgetItem *item, int colu
     emit productKeySent(productkey);
 
 }
+
 /* 버튼 클릭 시 입력 값 초기화 하는 슬롯 */
 void OrderManagerForm::on_clearButton_clicked()
 {

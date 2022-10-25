@@ -22,7 +22,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->actionServer->setIcon(QIcon(":/images/server.png"));
     ui->actionChat->setIcon(QIcon(":/images/chat.png"));
     ui->actionQuit->setIcon(QIcon(":/images/quit.png"));
-    ui->toolBar->setIconSize(QSize(86, 86));
+    ui->toolBar->setIconSize(QSize(66, 66));
     setContextMenuPolicy (Qt::NoContextMenu);
 
     clientForm = new ClientManagerForm(this);
