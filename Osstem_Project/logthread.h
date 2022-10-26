@@ -15,7 +15,7 @@ public:
 private:
     void run();
 
-    QList<QTreeWidgetItem*> itemList;
+    QList<QTreeWidgetItem*> itemList;   /* 로그의 데이터 기록 */
     QString filename;
 
 signals:

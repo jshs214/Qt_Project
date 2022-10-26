@@ -25,6 +25,8 @@ ChattingForm::ChattingForm(QWidget *parent) :
     ui(new Ui::ChattingForm), isSent(false)
 {
     ui->setupUi(this);
+
+    /* 포트번호, ip 입력란에 정규표현식 사용 */
     ui->serverAddress->setText("127.0.0.1");
     //ui->serverAddress->setInputMask("999.999.999.999;_");
     QRegularExpression re("^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\."
@@ -34,12 +36,9 @@ ChattingForm::ChattingForm(QWidget *parent) :
     QRegularExpressionValidator validator(re);
     ui->serverAddress->setPlaceholderText("Server IP Address");
     ui->serverAddress->setValidator(&validator);
-
     ui->serverPort->setText(QString::number(PORT_NUMBER));
     ui->serverPort->setInputMask("00000;_");
     ui->serverPort->setPlaceholderText("Server Port No");
-
-    ui->message->setReadOnly(true);
 
     // 서버로 보낼 메시지를 위한 위젯들
     connect(ui->inputLine, SIGNAL(returnPressed( )), SLOT(sendData( )));
@@ -47,22 +46,27 @@ ChattingForm::ChattingForm(QWidget *parent) :
     connect(ui->sentButton, SIGNAL(clicked( )), SLOT(sendData( )));
     connect(ui->sentButton, SIGNAL(clicked( )), ui->inputLine, SLOT(clear( )));
 
-    ui->inputLine->setEnabled(false);
-    ui->sentButton->setEnabled(false);
 
     connect(ui->fileButton, SIGNAL(clicked( )), SLOT(sendFile( )));
+
+    /* 버튼의 상태변경 */
+    ui->message->setReadOnly(true);
+    ui->inputLine->setEnabled(false);
+    ui->sentButton->setEnabled(false);
     ui->fileButton->setDisabled(true);
     ui->logoutButton->setDisabled(true);
 
-    // 채팅을 위한 소켓
-    clientSocket = new QTcpSocket(this);         // 클라이언트 소켓 생성
+    /* 채팅을 위한 소켓 */
+    clientSocket = new QTcpSocket(this);
     connect(clientSocket, &QAbstractSocket::errorOccurred,
             [=]{ qDebug( ) <<  clientSocket->errorString( ); });
     connect(clientSocket, SIGNAL(readyRead( )), SLOT(receiveData( )));
     connect(clientSocket, SIGNAL(disconnected( )), SLOT(disconnect( )));
 
-    // 파일 전송을 위한 소켓
+    /* 파일 전송을 위한 소켓 */
     fileClient = new QTcpSocket(this);
+
+    /* 파일 전송 시 나눠서 전송 */
     connect(fileClient, SIGNAL(bytesWritten(qint64)), SLOT(goOnSend(qint64)));
 
     progressDialog = new QProgressDialog(0);
@@ -107,8 +111,6 @@ ChattingForm::ChattingForm(QWidget *parent) :
 ChattingForm::~ChattingForm()
 {
     clientSocket->close( );
-    QSettings settings("ChatClient", "Chat Client");        //key, value
-    settings.setValue("ChatClient/ID", ui->name->text());
     delete ui;
 }
 
@@ -118,8 +120,6 @@ void ChattingForm::closeEvent(QCloseEvent*)
     if(ui->connectButton->text() == "Log In")   return;
     sendProtocol(Chat_LogOut, (ui->name->text().toStdString()+","+
                                ui->idLineEdit->text().toStdString()).data() );
-
-    //sendProtocol(Chat_LogOut, ui->name->text().toStdString().data());
     clientSocket->disconnectFromHost();
     if(clientSocket->state() != QAbstractSocket::UnconnectedState)
         clientSocket->waitForDisconnected();
@@ -146,9 +146,10 @@ void ChattingForm::receiveData( )
         if(QString(data) == "true")
         {
             QMessageBox::information(this, tr("Success"), \
-                                  tr("Successed Login"));
+                                     tr("Successed Login"));
             ui->connectButton->setText(tr("Chat in"));
             ui->name->setReadOnly(true);
+            ui->idLineEdit->setReadOnly(true);
             ui->logoutButton->setEnabled(true);
             ui->serverAddress->setEnabled(false);
             ui->serverPort->setEnabled(false);
@@ -166,8 +167,8 @@ void ChattingForm::receiveData( )
         ui->fileButton->setEnabled(true);
         break;
     case Chat_KickOut:
-{        sendProtocol(Chat_Out, (ui->name->text().toStdString()+","+
-                               ui->idLineEdit->text().toStdString()).data() );
+    {        sendProtocol(Chat_Out, (ui->name->text().toStdString()+","+
+                                     ui->idLineEdit->text().toStdString()).data() );
         QMessageBox::critical(this, tr("Chatting Client"), \
                               tr("Kick out from Server"));
         ui->inputLine->setDisabled(true);        //버튼 상태 변경
@@ -179,7 +180,7 @@ void ChattingForm::receiveData( )
         QString data ="";
         sendProtocol(Chat_List,data.toStdString().data());
         break;
-}
+    }
     case Chat_Invite:
     {
         sendProtocol(Chat_In, (ui->name->text().toStdString()+","+
@@ -225,6 +226,7 @@ void ChattingForm::disconnect( )
                           tr("Disconnect from Server"));
     ui->inputLine->setEnabled(false);
     ui->name->setReadOnly(false);
+    ui->idLineEdit->setReadOnly(false);
     ui->sentButton->setEnabled(false);
     ui->connectButton->setText(tr("Log In"));
     ui->logoutButton->setDisabled(true);
@@ -283,9 +285,9 @@ void ChattingForm::sendFile() // Open the file and get the file name (including 
     outBlock.clear();
 
     QString filename = QFileDialog::getOpenFileName(this);
-    if(filename.length()){
+    if(filename.length()){  //파일이 있으면
         file = new QFile(filename);
-        file->open(QFile::ReadOnly);
+        file->open(QFile::ReadOnly);    //파일 오픈
 
         qDebug() << QString("file %1 is opened").arg(filename);
         progressDialog->setValue(0); // Not sent for the first time
