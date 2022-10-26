@@ -9,7 +9,7 @@ typedef enum {
     Chat_LogOut,            // 로그 아웃(서버 단절) --> 초대 불가능
     Chat_Invite,            // 초대
     Chat_KickOut,           // 강퇴
-    Chat_List,
+    Chat_List,              // 현재 채팅방 목록
 } Chat_Status;
 
 #endif // CHAT_STATUS_H

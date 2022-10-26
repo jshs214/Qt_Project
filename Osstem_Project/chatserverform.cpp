@@ -79,6 +79,7 @@ ChatServerForm::ChatServerForm(QWidget *parent) :
     ui->stateLineedit->setText(tr("The server is running on port %1.").arg(chatServer->serverPort()));
 
     connect(ui->inputLineEdit, SIGNAL(returnPressed( )), SLOT(on_sendButton_clicked( )));
+
 }
 
 ChatServerForm::~ChatServerForm()
@@ -170,7 +171,6 @@ void ChatServerForm::receiveData( )
         break;
     }
     case Chat_Talk: {
-        qDebug("Server ChatTalk On");
         foreach(QTcpSocket *sock, clientSocketHash.values()) {
             if(clientPortIDHash.contains(sock->peerPort()) && sock != clientConnection) { //포트가 있고, 내꺼가 아니면
                 foreach(auto item, ui->clientTreeWidget->findItems(clientPortIDHash[sock->peerPort()], Qt::MatchFixedString, 2)) {
@@ -256,6 +256,9 @@ void ChatServerForm::receiveData( )
         sendChatList();
         break;
     }
+    case Chat_List:
+        sendChatList();
+        break;
     default:
         break;
     }
@@ -307,36 +310,6 @@ void ChatServerForm::on_clientTreeWidget_customContextMenuRequested(const QPoint
     QPoint globalPos = ui->clientTreeWidget->mapToGlobal(pos);
     menu->exec(globalPos);
 }
-/* 클라이언트 강퇴하기 */
-void ChatServerForm::kickOut()
-{
-    QByteArray sendArray;
-    QDataStream out(&sendArray, QIODevice::WriteOnly);
-    out << Chat_KickOut;
-    out.writeRawData("", 1020);
-
-    //QString name = ui->clientTreeWidget->currentItem()->text(1);
-    QString id = ui->clientTreeWidget->currentItem()->text(2);
-    QTcpSocket* sock = clientSocketHash[id];
-    sock->write(sendArray);
-
-    ui->clientTreeWidget->currentItem()->setText(0, "On");
-    ui->clientTreeWidget->currentItem()->setIcon(0, QIcon(":/images/yellowlight.png"));
-
-    foreach(auto item, ui->chattingTreeWidget->findItems(id, Qt::MatchFixedString, 2)) {
-        ui->chattingTreeWidget->takeTopLevelItem(ui->chattingTreeWidget->indexOfTopLevelItem(item));
-    }
-
-}
-
-void ChatServerForm::sendLogInOut(QTcpSocket* sock , const char* data)
-{
-    QByteArray dataArray;           // 소켓으로 보낼 데이터를 채우고
-    QDataStream out(&dataArray, QIODevice::WriteOnly);
-    out << Chat_Login;
-    out.writeRawData(data, 1020);
-    sock->write(dataArray);
-}
 
 /* 클라이언트 초대하기 */
 void ChatServerForm::inviteClient()
@@ -352,6 +325,7 @@ void ChatServerForm::inviteClient()
 
     QTcpSocket* sock = clientSocketHash[id];
     sock->write(sendArray);
+    sock->flush();
 
     ui->clientTreeWidget->currentItem()->setText(0, "Chat");
     ui->clientTreeWidget->currentItem()->setIcon(0, QIcon(":/images/greenlight.png"));
@@ -361,6 +335,41 @@ void ChatServerForm::inviteClient()
     chatItem->setText(2,id);
 
 }
+
+/* 클라이언트 강퇴하기 */
+void ChatServerForm::kickOut()
+{
+    QByteArray sendArray;
+    QDataStream out(&sendArray, QIODevice::WriteOnly);
+    out << Chat_KickOut;
+    out.writeRawData("", 1020);
+
+    //QString name = ui->clientTreeWidget->currentItem()->text(1);
+    QString id = ui->clientTreeWidget->currentItem()->text(2);
+    QTcpSocket* sock = clientSocketHash[id];
+    sock->write(sendArray);
+    sock->flush();
+
+    ui->clientTreeWidget->currentItem()->setText(0, "On");
+    ui->clientTreeWidget->currentItem()->setIcon(0, QIcon(":/images/yellowlight.png"));
+
+    foreach(auto item, ui->chattingTreeWidget->findItems(id, Qt::MatchFixedString, 2)) {
+        ui->chattingTreeWidget->takeTopLevelItem(ui->chattingTreeWidget->indexOfTopLevelItem(item));
+    }
+
+    //sendChatList();
+
+}
+
+void ChatServerForm::sendLogInOut(QTcpSocket* sock , const char* data)
+{
+    QByteArray dataArray;           // 소켓으로 보낼 데이터를 채우고
+    QDataStream out(&dataArray, QIODevice::WriteOnly);
+    out << Chat_Login;
+    out.writeRawData(data, 1020);
+    sock->write(dataArray);
+}
+
 
 /* 파일 전송을 위한 소켓 생성 */
 void ChatServerForm::acceptConnection()
@@ -487,18 +496,16 @@ void ChatServerForm::sendChatList()
     foreach(auto item, ui->clientTreeWidget->findItems("Chat", Qt::MatchFixedString, 0)) {
         QString name = item->text(1);
         QString id = item->text(2);
-        dataArray.append(name.toStdString()+"("+id.toStdString()+")");
         dataArray.append(",");
+        dataArray.append(name.toStdString()+"("+id.toStdString()+")");
 
     }
     foreach(QTcpSocket *sock, clientSocketHash.values()) {
         foreach(auto item, ui->clientTreeWidget->findItems(clientPortIDHash[sock->peerPort()], Qt::MatchFixedString, 2)) {
             Q_UNUSED(item);
-                sock->write(dataArray);
-
+            sock->write(dataArray);
         }
     }
 }
-
 
 

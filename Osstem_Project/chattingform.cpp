@@ -88,7 +88,6 @@ ChattingForm::ChattingForm(QWidget *parent) :
             ui->inputLine->setEnabled(true);
             ui->sentButton->setEnabled(true);
             ui->fileButton->setEnabled(true);
-            ui->stateLineEdit->setText(tr("Active"));
         }
         else if(ui->connectButton->text() == tr("Chat Out"))  {
             sendProtocol(Chat_Out, (ui->name->text().toStdString()+","+
@@ -98,7 +97,6 @@ ChattingForm::ChattingForm(QWidget *parent) :
             ui->inputLine->setDisabled(true);
             ui->sentButton->setDisabled(true);
             ui->fileButton->setDisabled(true);
-            ui->stateLineEdit->setText(tr("Successed LogIn"));
         }
     } );
 
@@ -147,10 +145,11 @@ void ChattingForm::receiveData( )
     case Chat_Login:
         if(QString(data) == "true")
         {
+            QMessageBox::information(this, tr("Success"), \
+                                  tr("Successed Login"));
             ui->connectButton->setText(tr("Chat in"));
             ui->name->setReadOnly(true);
             ui->logoutButton->setEnabled(true);
-            ui->stateLineEdit->setText(tr("Successed LogIn"));
             ui->serverAddress->setEnabled(false);
             ui->serverPort->setEnabled(false);
         }
@@ -167,6 +166,8 @@ void ChattingForm::receiveData( )
         ui->fileButton->setEnabled(true);
         break;
     case Chat_KickOut:
+{        sendProtocol(Chat_Out, (ui->name->text().toStdString()+","+
+                               ui->idLineEdit->text().toStdString()).data() );
         QMessageBox::critical(this, tr("Chatting Client"), \
                               tr("Kick out from Server"));
         ui->inputLine->setDisabled(true);        //버튼 상태 변경
@@ -174,9 +175,16 @@ void ChattingForm::receiveData( )
         ui->fileButton->setDisabled(true);
         ui->connectButton->setText(tr("Chat in"));
         ui->name->setReadOnly(false);
-        ui->stateLineEdit->setText(tr("Successed LogIn"));
+
+        QString data ="";
+        sendProtocol(Chat_List,data.toStdString().data());
         break;
+}
     case Chat_Invite:
+    {
+        sendProtocol(Chat_In, (ui->name->text().toStdString()+","+
+                               ui->idLineEdit->text().toStdString()).data() );
+
         QMessageBox::information(this, tr("Chatting Client"), \
                                  tr("Invited from Server"));
         ui->inputLine->setEnabled(true);        //버튼 상태 변경
@@ -184,9 +192,11 @@ void ChattingForm::receiveData( )
         ui->fileButton->setEnabled(true);
         ui->connectButton->setText("Chat Out");
         ui->name->setReadOnly(true);
-        ui->stateLineEdit->setText(tr("Active"));
 
+        QString data ="";
+        sendProtocol(Chat_List,data.toStdString().data());
         break;
+    }
     case Chat_List:
     {
         ui->stateTreeWidget->clear();
@@ -199,6 +209,7 @@ void ChattingForm::receiveData( )
             item->setText(0,v);
             ui->stateTreeWidget->addTopLevelItem(item);
         }
+        ui->stateTreeWidget->takeTopLevelItem(0);
 
         break;
     }
@@ -315,7 +326,6 @@ void ChattingForm::on_logoutButton_clicked()
     ui->message->clear();
     clientSocket->disconnectFromHost();
 
-    ui->stateLineEdit->setText("");
     ui->serverAddress->setEnabled(true);
     ui->serverPort->setEnabled(true);
     ui->stateTreeWidget->clear();

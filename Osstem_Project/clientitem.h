@@ -3,9 +3,11 @@
 
 #include <QTreeWidgetItem>
 
+/* 고객정보의 데이터를 관리하는 클래스*/
 class ClientItem : public QTreeWidgetItem
 {
 public:
+    /* 고객명, 고객ID, 전화번호, 주소 */
     explicit ClientItem(int id = 0, QString = "", QString = "", QString = "");
 
     QString getName() const;

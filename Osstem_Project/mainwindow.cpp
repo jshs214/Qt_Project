@@ -15,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    /* ui 툴바 및 액션 설정 */
     ui->toolBar->setAllowedAreas(Qt::RightToolBarArea);
     ui->actionClient->setIcon(QIcon(":/images/client.png"));
     ui->actionproduct->setIcon(QIcon(":/images/product.png"));
@@ -25,32 +26,30 @@ MainWindow::MainWindow(QWidget *parent)
     ui->toolBar->setIconSize(QSize(66, 66));
     setContextMenuPolicy (Qt::NoContextMenu);
 
+
     clientForm = new ClientManagerForm(this);
     clientForm->setWindowTitle(tr("Client Info"));
     connect(clientForm, SIGNAL(destroyed()),
             clientForm, SLOT(deleteLater()));
-
     productForm = new ProductManagerForm(this);
     productForm->setWindowTitle(tr("Product Info"));
     connect(productForm, SIGNAL(destroyed()),
             productForm, SLOT(deleteLater()));
-
     orderForm = new OrderManagerForm(this);
     orderForm->setWindowTitle(tr("Order Info"));
     connect(orderForm, SIGNAL(destroyed()),
             orderForm, SLOT(deleteLater()));
-
     serverForm = new ChatServerForm(this);
     serverForm->setWindowTitle(tr("Chatting Server"));
     connect(serverForm, SIGNAL(destroyed()),
             serverForm, SLOT(deleteLater()));
 
-
-    connect(orderForm, SIGNAL(clientNameSent(QString)),   //검색 후 고객리스트 출력을 위한 시그널 슬롯
+    /* 고객,제품의 데이터를 주문정보로 넘겨주는 시그널 슬롯 */
+    connect(orderForm, SIGNAL(clientNameSent(QString)),
             clientForm, SLOT(receiveClientName(QString)));
     connect(clientForm,SIGNAL(clientDataSent(ClientItem*)),
             orderForm, SLOT(receiveClientData(ClientItem*)));
-    connect(orderForm, SIGNAL(productNameSent(QString)),  //검색 후 제품리스트 출력을 위한 시그널 슬롯
+    connect(orderForm, SIGNAL(productNameSent(QString)),
             productForm, SLOT(receiveProductName(QString)));
     connect(productForm,SIGNAL(productDataSent(ProductItem*)),
             orderForm, SLOT(receiveProductData(ProductItem*)));
@@ -67,29 +66,29 @@ MainWindow::MainWindow(QWidget *parent)
             orderForm, SLOT(receive_ProductTreewidget_itemclicked(ProductItem*)));
 
     /*키값(재고)를 위한 시그널 슬롯 */
-    connect(orderForm, SIGNAL(productAddKeySent(int, QString)),       //주문 시.
+    connect(orderForm, SIGNAL(productAddKeySent(int, QString)),       //주문 추가
             productForm, SLOT(receiveAddStock(int, QString)));
-    connect(orderForm, SIGNAL(productModKeySent(int,QString,QString)),//주문 변경 시.
+    connect(orderForm, SIGNAL(productModKeySent(int,QString,QString)),//주문 변경
             productForm, SLOT(receiveModStock(int, QString, QString)));
-    connect(orderForm, SIGNAL(removedataSent(int, QString)),        //주문 삭제 시.
+    connect(orderForm, SIGNAL(removedataSent(int, QString)),        //주문 삭제
             productForm, SLOT(receiveDelStock(int, QString)));
 
-    //ui->stackedWidget->setActiveSubWindow(cw);    //없으면 마지막으로 추가한 subWindow가 열림
-
-    connect(clientForm, SIGNAL(addClient(int, QString) ),   //고객관리에서 데이터 추가 시 채팅서버에 고객리스트 추가
+    /* 고객정보를 채팅서버로 넘겨주는 시그널 슬롯 */
+    connect(clientForm, SIGNAL(addClient(int, QString) ),
             serverForm, SLOT(addClient(int, QString)));
-    connect(clientForm, SIGNAL(remClient(int) ),        //고객관리에서 데이터 삭제 시 채팅서버에 고객리스트 삭제
+    connect(clientForm, SIGNAL(remClient(int) ),
             serverForm, SLOT(remClient(int)) );
 
+    /* 파일의 데이터 입력하는 메서드 */
     clientForm->loadData();
     productForm->loadData();
     orderForm->loadData();
 
+    /* ui 설정 */
     ui->stackedWidget->insertWidget(0, clientForm);
     ui->stackedWidget->insertWidget(1, productForm);
     ui->stackedWidget->insertWidget(2, orderForm);
     ui->stackedWidget->insertWidget(3, serverForm);
-
     clientForm->showMaximized();
     ui->stackedWidget->setCurrentIndex(0);
     this->setWindowTitle("Qt_Project");
@@ -104,29 +103,32 @@ MainWindow::~MainWindow()
     delete chattingForm;
     delete ui;
 }
+
+/* 고객정보 슬롯 */
 void MainWindow::on_actionClient_triggered()
 {
     ui->stackedWidget->setCurrentIndex(0);
 }
 
-
+/* 제품정보 슬롯 */
 void MainWindow::on_actionproduct_triggered()
 {
     ui->stackedWidget->setCurrentIndex(1);
 }
 
-
+/* 주문정보 슬롯 */
 void MainWindow::on_actionOrder_triggered()
 {
     ui->stackedWidget->setCurrentIndex(2);
 }
 
+/* 채팅서버 슬롯 */
 void MainWindow::on_actionServer_triggered()
 {
     ui->stackedWidget->setCurrentIndex(3);
 }
 
-
+/* 채팅창 open하는 슬롯 */
 void MainWindow::on_actionChat_triggered()
 {
     chattingForm = new ChattingForm;

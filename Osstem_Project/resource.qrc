@@ -9,5 +9,6 @@
         <file>images/redlight.png</file>
         <file>images/yellowlight.png</file>
         <file>images/server.png</file>
+        <file>images/eraser.png</file>
     </qresource>
 </RCC>

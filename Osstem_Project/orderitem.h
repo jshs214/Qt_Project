@@ -3,9 +3,11 @@
 
 #include <QTreeWidgetItem>
 
+/* 주문정보의 데이터를 관리하는 클래스*/
 class OrderItem :public QTreeWidgetItem
 {
 public:
+    /* 주문번호, 고객, 제품, 주문수량, 주소, 가격, 총 합 */
     explicit OrderItem(int id = 0, QString = "", QString = "",
                        QString = "", QString = "", QString="", QString="");
 
