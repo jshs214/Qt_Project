@@ -51,11 +51,11 @@ ChatServerForm::ChatServerForm(QWidget *parent) :
         return;
     }
 
-    qDebug("Start listening ...");
+    qDebug()<<tr("Start listening ...");
 
     /* Context 메뉴의 액션 설정 */
     QAction* inviteAction = new QAction(tr("&Invite"));
-    inviteAction->setObjectName("Invite");
+    inviteAction->setObjectName(tr("Invite"));
     connect(inviteAction, SIGNAL(triggered()), SLOT(inviteClient()));
     QAction* removeAction = new QAction(tr("&Kick out"));
     connect(removeAction, SIGNAL(triggered()), SLOT(kickOut()));
@@ -98,7 +98,7 @@ void ChatServerForm::clientConnect( )
     QTcpSocket *clientConnection = chatServer->nextPendingConnection( );
     connect(clientConnection, SIGNAL(readyRead( )), SLOT(receiveData( )));
     connect(clientConnection, SIGNAL(disconnected( )), SLOT(removeClient()));
-    qDebug("new connection is established...");
+    qDebug()<<tr("new connection is established...");
 }
 
 /* 데이터를 받을 때 */
@@ -163,8 +163,8 @@ void ChatServerForm::receiveData( )
         /* 사용자의 상태 변경*/
         foreach(auto item, ui->clientTreeWidget->findItems(id, Qt::MatchFixedString, 2)) {
             if(item->text(1) == name){
-                if(item->text(0) != "Chat") {
-                    item->setText(0, "Chat");
+                if(item->text(0) != tr("Chat")) {
+                    item->setText(0, tr("Chat"));
                     item->setIcon(0, QIcon(":/images/greenlight.png"));
                     /* 채팅방의 사용자 목록 상태 변경 */
                     QTreeWidgetItem* chatItem = new QTreeWidgetItem(ui->chattingTreeWidget);
@@ -185,12 +185,12 @@ void ChatServerForm::receiveData( )
             if(clientPortIDHash.contains(sock->peerPort()) && sock != clientConnection) {
                 /* 현재 채팅 중인 상태의 클라이언트 에게 데이터를 보내줌  */
                 foreach(auto item, ui->clientTreeWidget->findItems(clientPortIDHash[sock->peerPort()], Qt::MatchFixedString, 2)) {
-                    if(item->text(0) =="Chat"){
+                    if(item->text(0) == tr("Chat")){
                         QByteArray sendArray;
                         sendArray.clear();
                         QDataStream out(&sendArray, QIODevice::WriteOnly);
                         out << Chat_Talk;
-                        sendArray.append("<font color=lightsteelblue>");
+                        sendArray.append("<font color=blue>");
                         sendArray.append(clientNameHash[port].toStdString().data());
                         sendArray.append("("+clientPortIDHash[port].toStdString()+")");
                         sendArray.append("</font> : ");
@@ -213,8 +213,8 @@ void ChatServerForm::receiveData( )
         for(int i = 0; i < ui->messageTreeWidget->columnCount(); i++)
             ui->messageTreeWidget->resizeColumnToContents(i);
 
-        /* 이름과 id 값과 입력한 메시지를 보냄 */
-        ui->message->append("<font color=lightsteelblue>" + clientNameHash[port] + "(" + clientPortIDHash[port] + ")"
+        /* 이름, id 값과 입력받은 메시지를 관리자 채팅창으로  */
+        ui->message->append("<font color=blue>" + clientNameHash[port] + "(" + clientPortIDHash[port] + ")"
                             + "</font> : " + receiveData);
 
         /* logThread로 로그데이터 보냄 */
@@ -318,10 +318,10 @@ void ChatServerForm::on_clientTreeWidget_customContextMenuRequested(const QPoint
 {
     if(ui->clientTreeWidget->currentItem() == nullptr)  return; //예외처리
     foreach(QAction *action, menu->actions()) {
-        if(action->objectName() == "Invite")
+        if(action->objectName() == tr("Invite"))
             action->setEnabled(ui->clientTreeWidget->currentItem()->text(0) == "On");
         else    // "Kick Out"
-            action->setEnabled(ui->clientTreeWidget->currentItem()->text(0) == "Chat");
+            action->setEnabled(ui->clientTreeWidget->currentItem()->text(0) == tr("Chat"));
     }
     QPoint globalPos = ui->clientTreeWidget->mapToGlobal(pos);
     menu->exec(globalPos);
@@ -347,7 +347,7 @@ void ChatServerForm::inviteClient()
     sock->flush();
 
     /* 사용자의 상태 및 채팅방 목록 변경 */
-    ui->clientTreeWidget->currentItem()->setText(0, "Chat");
+    ui->clientTreeWidget->currentItem()->setText(0, tr("Chat"));
     ui->clientTreeWidget->currentItem()->setIcon(0, QIcon(":/images/greenlight.png"));
     QTreeWidgetItem* chatItem = new QTreeWidgetItem(ui->chattingTreeWidget);
     chatItem->setText(1,name);
@@ -396,7 +396,7 @@ void ChatServerForm::sendLogInOut(QTcpSocket* sock , const char* data)
 /* 파일 전송을 위한 소켓 생성 */
 void ChatServerForm::acceptConnection()
 {
-    qDebug("Connected, preparing to receive files!");
+    qDebug() << tr("Connected, preparing to receive files!");
     QTcpSocket* receivedSocket = fileServer->nextPendingConnection();
     connect(receivedSocket, SIGNAL(readyRead()), this, SLOT(readClient()));
 }
@@ -404,7 +404,7 @@ void ChatServerForm::acceptConnection()
 /* 파일 전송 */
 void ChatServerForm::readClient()
 {
-    qDebug("Receiving file ...");
+    qDebug()<<tr("Receiving file ...");
     QTcpSocket* receivedSocket = dynamic_cast<QTcpSocket *>(sender( )); //어느 소켓에서 데이터를 받아왔는지
 
     QString filename, name, id;
@@ -455,7 +455,7 @@ void ChatServerForm::readClient()
 
     /* 파일전송이 완료되면 progressDialog 종료, 파일 객체 삭제 */
     if (byteReceived == totalSize) {
-        qDebug() << QString("%1 receive completed").arg(filename);
+        qDebug() << QString(tr("%1 receive completed")).arg(filename);
 
         inBlock.clear();
         byteReceived = 0;
@@ -476,7 +476,7 @@ void ChatServerForm::on_sendButton_clicked()
         /* 연결되어 있는 모든 소켓 */
         foreach(QTcpSocket *sock, clientSocketHash.values()) {
             foreach(auto item, ui->clientTreeWidget->findItems(clientPortIDHash[sock->peerPort()], Qt::MatchFixedString, 2)) {
-                if(item->text(0) =="Chat"){
+                if(item->text(0) ==tr("Chat")){
                     /* 소켓으로 보낼 데이터를 채워 전송 */
                     QByteArray sendArray;
                     sendArray.clear();
@@ -523,7 +523,7 @@ void ChatServerForm::sendChatList()
     out << Chat_List;
 
     /* 현재 채팅방 참여인원 전달 */
-    foreach(auto item, ui->clientTreeWidget->findItems("Chat", Qt::MatchFixedString, 0)) {
+    foreach(auto item, ui->clientTreeWidget->findItems(tr("Chat"), Qt::MatchFixedString, 0)) {
         QString name = item->text(1);
         QString id = item->text(2);
         sendArray.append(",");

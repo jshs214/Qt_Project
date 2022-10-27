@@ -119,7 +119,8 @@ ChattingForm::~ChattingForm()
 /* 창이 닫힐 때 서버에 연결 접속 메시지를 보내고 종료 */
 void ChattingForm::closeEvent(QCloseEvent*)
 {
-    if(ui->connectButton->text() == "Log In")   return;
+    if(ui->connectButton->text() == tr("Log In"))   return; // 로그인 안된 상태에서는 소켓 connect이 안되있으므로 예외처리
+
     /* 프로토콜 생성해서 서버로 전송 */
     sendProtocol(Chat_LogOut, (ui->name->text().toStdString()+","+
                                ui->idLineEdit->text().toStdString()).data() );
@@ -200,7 +201,7 @@ void ChattingForm::receiveData( )
         ui->inputLine->setEnabled(true);        //버튼 상태 변경
         ui->sentButton->setEnabled(true);
         ui->fileButton->setEnabled(true);
-        ui->connectButton->setText("Chat Out");
+        ui->connectButton->setText(tr("Chat Out"));
         ui->name->setReadOnly(true);
 
         /* 프로토콜 생성해서 서버로 전송 */
@@ -254,7 +255,7 @@ void ChattingForm::sendFile()
         file = new QFile(filename);
         file->open(QFile::ReadOnly);    //파일 오픈
 
-        qDebug() << QString("file %1 is opened").arg(filename);
+        qDebug() << QString(tr("file %1 is opened")).arg(filename);
         progressDialog->setValue(0); // 처음으로 전송되지 않음
 
         /* 처음 전송될 때만 연결이 연결 신호를 생성할 때 발생 */
@@ -285,7 +286,7 @@ void ChattingForm::sendFile()
         progressDialog->setValue(totalSize-byteToWrite);
         progressDialog->show();
     }
-    qDebug() << QString("Sending file %1").arg(filename);
+    qDebug() << QString(tr("Sending file %1")).arg(filename);
 
 }
 
@@ -302,7 +303,7 @@ void ChattingForm::goOnSend(qint64 numBytes) // Start sending file content
 
     /* 전송 완료되면 progressDialog리셋 */
     if (byteToWrite == 0) {
-        qDebug("File sending completed!");
+        qDebug() << tr("File sending completed!");
         progressDialog->reset();
     }
 }

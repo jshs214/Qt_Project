@@ -67,7 +67,7 @@ ClientManagerForm::~ClientManagerForm()
 
     /* 파일의 데이터를 ','로 파싱해서 저장 */
     QTextStream out(&file);
-    for (const auto& v : clientList) {
+    for (const auto& v : qAsConst(clientList)) {
         ClientItem* c = v;
         out << c->id() << ", " << c->getName() << ", ";
         out << c->getPhoneNumber() << ", ";
@@ -91,10 +91,10 @@ int ClientManagerForm::makeId( )
 void ClientManagerForm::on_addPushButton_clicked()
 {
     /* 검색 결과에서 정보 추가 시 경고메시지*/
-    if(ui->clientInfoLabel->text() != "ClientInfoManager")
+    if(ui->clientInfoLabel->text() != tr("ClientInfoManager"))
     {
-        QMessageBox::warning(this, "Error",
-                             QString("This is a search Info.\nGo to ClientInfoManager."));
+        QMessageBox::warning(this, tr("Error"),
+                             QString(tr("This is a search Info.\nGo to ClientInfoManager.")));
         return;
     }
     QString name, number, address;
@@ -140,10 +140,10 @@ void ClientManagerForm::on_modifyPushButton_clicked()
 /* 고객정보검색을 위한 슬롯 */
 void ClientManagerForm::on_searchPushButton_clicked()
 {
-    ui->clientInfoLabel->setText("Serach Info");
+    ui->clientInfoLabel->setText(tr("Serach Info"));
 
     /* 모든 고객 데이터 hidden */
-    for (const auto& v : clientList) {
+    for (const auto& v : qAsConst(clientList)) {
         ClientItem* c = v;
         c->setHidden(true);
     }
@@ -160,8 +160,8 @@ void ClientManagerForm::on_searchPushButton_clicked()
 /* 검색결과 창에서 고객정보관리로 돌아오는 슬롯 */
 void ClientManagerForm::on_statePushButton_clicked()
 {
-    ui->clientInfoLabel->setText("ClientInfoManager");
-    for (const auto& v : clientList) {
+    ui->clientInfoLabel->setText(tr("ClientInfoManager"));
+    for (const auto& v : qAsConst(clientList)) {
         ClientItem* c = v;
         c->setHidden(false);
     }

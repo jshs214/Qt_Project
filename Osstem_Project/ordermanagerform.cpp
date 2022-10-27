@@ -73,7 +73,7 @@ OrderManagerForm::~OrderManagerForm()
 
     /* 파일의 데이터를 ','로 파싱해서 저장 */
     QTextStream out(&file);
-    for (const auto& v : orderList) {
+    for (const auto& v : qAsConst(orderList)) {
         OrderItem* o = v;
         out << o->id() << ", " << o->getClient() << ", ";
         out << o->getProduct() << ", ";
@@ -193,10 +193,10 @@ void OrderManagerForm::on_productTreeWidget_itemClicked(QTreeWidgetItem *item, i
 void OrderManagerForm::on_addPushButton_clicked()
 {
     /* 검색 결과에서 정보 추가 시 경고메시지*/
-    if(ui->orderInfoLabel->text() != "OrderManagerInfo")
+    if(ui->orderInfoLabel->text() != tr("OrderManagerInfo"))
     {
-        QMessageBox::information(this, "Error",
-                                 QString("This is Search Info.\nGo to OrderManagerInfo."));
+        QMessageBox::information(this, tr("Error"),
+                                 QString(tr("This is Search Info.\nGo to OrderManagerInfo.") ));
         return;
     }
 
@@ -248,7 +248,7 @@ void OrderManagerForm::on_addPushButton_clicked()
 /* 주문정보검색을 위한 슬롯 */
 void OrderManagerForm::on_searchPushButton_clicked()
 {
-    ui->orderInfoLabel->setText("Search Info");
+    ui->orderInfoLabel->setText(tr("Search Info") );
 
     /* 모든 주문 데이터 hidden */
     for (const auto& v : qAsConst(orderList)) {
@@ -269,8 +269,8 @@ void OrderManagerForm::on_searchPushButton_clicked()
 /* 검색결과 창에서 주문정보관리로 돌아오는 슬롯 */
 void OrderManagerForm::on_statePushButton_clicked()
 {
-    ui->orderInfoLabel->setText("OrderManagerInfo");
-    for (const auto& v : orderList) {
+    ui->orderInfoLabel->setText(tr("OrderManagerInfo") );
+    for (const auto& v : qAsConst(orderList)) {
         OrderItem* o = v;
         o->setHidden(false);
     }
@@ -304,14 +304,14 @@ void OrderManagerForm::on_modifyPushButton_clicked()
         int resultstock = productTree_Stock.toInt() + orderTree_Stock.toInt();
         /* 변경 가능 수량이 많이 입력된 경우 경고메시지*/
         if( resultstock < stock.toInt()) {
-            QMessageBox::information(this, "Sold Out",
-                                     QString("재고 부족\n%0개 까지 변경 가능합니다.").arg(resultstock));
+            QMessageBox::information(this, tr("Error"),
+                                     QString(tr("out of stock\nYou can change up to %0.")).arg(resultstock));
             return ;
         }
         /* 변경할 제품과 선택한 제품이 다른 경우 경고메시지*/
         if( productkey != pItem->text(0)){
-            QMessageBox::information(this, "Error",
-                                     QString("오류\n선택한 제품명과 고르신 제품명이 다릅니다."));
+            QMessageBox::information(this, tr("Error"),
+                                     QString(tr("The selected product name and the selected product name are different.")) );
             return ;
         }
         /* 재고반영을 위해 키값, 수정할 수량, 입력된 수량을 시그널로 보냄 */
@@ -335,8 +335,8 @@ void OrderManagerForm::on_modifyPushButton_clicked()
     /* 변경할 제품이 선택되지 않은 경우 경고메시지*/
     else
     {
-        QMessageBox::information(this, "Error",
-                                 QString("제품리스트의 제품을 선택해주세요."));
+        QMessageBox::information(this, tr("Error"),
+                                 QString(tr("Please select a product from the product list.")) );
         return;
     }
 

@@ -60,7 +60,7 @@ ProductManagerForm::~ProductManagerForm()
 
     /* 파일의 데이터를 ','로 파싱해서 저장 */
     QTextStream out(&file);
-    for (const auto& v : productList) {
+    for (const auto& v : qAsConst(productList)) {
         ProductItem* p = v;
         out << p->id() << ", " << p->getName() << ", ";
         out << p->getPrice() << ", ";
@@ -86,8 +86,8 @@ void ProductManagerForm::on_addPushButton_clicked()
     /* 검색 결과에서 정보 추가 시 경고메시지 */
     if(ui->productInfoLabel->text() != "ProductInfoManager")
     {
-        QMessageBox::warning(this, "Error",
-                             QString("This is Search Info.\nGo to ProductInfoManager."));
+        QMessageBox::warning(this, tr("Error"),
+                             QString( tr("This is Search Info.\nGo to ProductInfoManager.")) );
         return;
     }
     QString name, price, stock;
@@ -131,10 +131,10 @@ void ProductManagerForm::on_modifyPushButton_clicked()
 /* 제품정보검색을 위한 슬롯 */
 void ProductManagerForm::on_searchPushButton_clicked()
 {
-    ui->productInfoLabel->setText("Search Info");
+    ui->productInfoLabel->setText(tr("Search Info"));
 
     /* 모든 제품 데이터 hidden */
-    for (const auto& v : productList) {
+    for (const auto& v : qAsConst(productList)) {
         ProductItem* p = v;
         p->setHidden(true);
     }
@@ -151,8 +151,8 @@ void ProductManagerForm::on_searchPushButton_clicked()
 /* 검색결과 창에서 제품정보관리로 돌아오는 슬롯 */
 void ProductManagerForm::on_statePushButton_clicked()
 {
-    ui->productInfoLabel->setText("ProductInfoManager");
-    for (const auto& v : productList) {
+    ui->productInfoLabel->setText(tr("ProductInfoManager"));
+    for (const auto& v : qAsConst(productList)) {
         ProductItem* p = v;
         p->setHidden(false);
     }
@@ -229,8 +229,8 @@ void ProductManagerForm::receiveAddStock(int key, QString Instock) //추가 시 
     ProductItem* p = productList[key];
     /* 주문 시, 재고부족을 위한 메시지 박스 */
     if(p->getStock().toInt() < Instock.toInt()) {
-        QMessageBox::information(this, "Sold Out",
-                                 QString("재고 부족\n %0개 까지 주문 가능합니다.").arg(p->getStock()));
+        QMessageBox::information(this, tr("Error"),
+                                 QString( tr("out of stock\nYou can order up to %0.") ).arg(p->getStock()));
         return; }
 
     QString stock = QString::number(p->getStock().toInt() - Instock.toInt() );
