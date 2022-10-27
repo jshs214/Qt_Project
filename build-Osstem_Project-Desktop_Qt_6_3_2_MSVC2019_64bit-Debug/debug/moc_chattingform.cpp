@@ -27,12 +27,12 @@ struct qt_meta_stringdata_ChattingForm_t {
     char stringdata1[12];
     char stringdata2[1];
     char stringdata3[9];
-    char stringdata4[11];
-    char stringdata5[13];
-    char stringdata6[12];
-    char stringdata7[6];
-    char stringdata8[9];
-    char stringdata9[9];
+    char stringdata4[9];
+    char stringdata5[9];
+    char stringdata6[11];
+    char stringdata7[13];
+    char stringdata8[12];
+    char stringdata9[6];
     char stringdata10[24];
 };
 #define QT_MOC_LITERAL(ofs, len) \
@@ -43,24 +43,24 @@ static const qt_meta_stringdata_ChattingForm_t qt_meta_stringdata_ChattingForm =
         QT_MOC_LITERAL(13, 11),  // "receiveData"
         QT_MOC_LITERAL(25, 0),  // ""
         QT_MOC_LITERAL(26, 8),  // "sendData"
-        QT_MOC_LITERAL(35, 10),  // "disconnect"
-        QT_MOC_LITERAL(46, 12),  // "sendProtocol"
-        QT_MOC_LITERAL(59, 11),  // "Chat_Status"
-        QT_MOC_LITERAL(71, 5),  // "char*"
-        QT_MOC_LITERAL(77, 8),  // "sendFile"
-        QT_MOC_LITERAL(86, 8),  // "goOnSend"
+        QT_MOC_LITERAL(35, 8),  // "sendFile"
+        QT_MOC_LITERAL(44, 8),  // "goOnSend"
+        QT_MOC_LITERAL(53, 10),  // "disconnect"
+        QT_MOC_LITERAL(64, 12),  // "sendProtocol"
+        QT_MOC_LITERAL(77, 11),  // "Chat_Status"
+        QT_MOC_LITERAL(89, 5),  // "char*"
         QT_MOC_LITERAL(95, 23)   // "on_logoutButton_clicked"
     },
     "ChattingForm",
     "receiveData",
     "",
     "sendData",
+    "sendFile",
+    "goOnSend",
     "disconnect",
     "sendProtocol",
     "Chat_Status",
     "char*",
-    "sendFile",
-    "goOnSend",
     "on_logoutButton_clicked"
 };
 #undef QT_MOC_LITERAL
@@ -82,20 +82,20 @@ static const uint qt_meta_data_ChattingForm[] = {
        1,    0,   62,    2, 0x08,    1 /* Private */,
        3,    0,   63,    2, 0x08,    2 /* Private */,
        4,    0,   64,    2, 0x08,    3 /* Private */,
-       5,    3,   65,    2, 0x08,    4 /* Private */,
-       5,    2,   72,    2, 0x28,    8 /* Private | MethodCloned */,
-       8,    0,   77,    2, 0x08,   11 /* Private */,
-       9,    1,   78,    2, 0x08,   12 /* Private */,
+       5,    1,   65,    2, 0x08,    4 /* Private */,
+       6,    0,   68,    2, 0x08,    6 /* Private */,
+       7,    3,   69,    2, 0x08,    7 /* Private */,
+       7,    2,   76,    2, 0x28,   11 /* Private | MethodCloned */,
       10,    0,   81,    2, 0x08,   14 /* Private */,
 
  // slots: parameters
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, 0x80000000 | 6, 0x80000000 | 7, QMetaType::Int,    2,    2,    2,
-    QMetaType::Void, 0x80000000 | 6, 0x80000000 | 7,    2,    2,
-    QMetaType::Void,
     QMetaType::Void, QMetaType::LongLong,    2,
+    QMetaType::Void,
+    QMetaType::Void, 0x80000000 | 8, 0x80000000 | 9, QMetaType::Int,    2,    2,    2,
+    QMetaType::Void, 0x80000000 | 8, 0x80000000 | 9,    2,    2,
     QMetaType::Void,
 
        0        // eod
@@ -109,11 +109,11 @@ void ChattingForm::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id
         switch (_id) {
         case 0: _t->receiveData(); break;
         case 1: _t->sendData(); break;
-        case 2: _t->disconnect(); break;
-        case 3: _t->sendProtocol((*reinterpret_cast< std::add_pointer_t<Chat_Status>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<char*>>(_a[2])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[3]))); break;
-        case 4: _t->sendProtocol((*reinterpret_cast< std::add_pointer_t<Chat_Status>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<char*>>(_a[2]))); break;
-        case 5: _t->sendFile(); break;
-        case 6: _t->goOnSend((*reinterpret_cast< std::add_pointer_t<qint64>>(_a[1]))); break;
+        case 2: _t->sendFile(); break;
+        case 3: _t->goOnSend((*reinterpret_cast< std::add_pointer_t<qint64>>(_a[1]))); break;
+        case 4: _t->disconnect(); break;
+        case 5: _t->sendProtocol((*reinterpret_cast< std::add_pointer_t<Chat_Status>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<char*>>(_a[2])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[3]))); break;
+        case 6: _t->sendProtocol((*reinterpret_cast< std::add_pointer_t<Chat_Status>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<char*>>(_a[2]))); break;
         case 7: _t->on_logoutButton_clicked(); break;
         default: ;
         }
@@ -128,7 +128,7 @@ const QMetaObject ChattingForm::staticMetaObject = { {
     nullptr,
 qt_incomplete_metaTypeArray<qt_meta_stringdata_ChattingForm_t
 , QtPrivate::TypeAndForceComplete<ChattingForm, std::true_type>
-, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<Chat_Status, std::false_type>, QtPrivate::TypeAndForceComplete<char *, std::false_type>, QtPrivate::TypeAndForceComplete<int, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<Chat_Status, std::false_type>, QtPrivate::TypeAndForceComplete<char *, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<qint64, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>
+, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<qint64, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<Chat_Status, std::false_type>, QtPrivate::TypeAndForceComplete<char *, std::false_type>, QtPrivate::TypeAndForceComplete<int, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<Chat_Status, std::false_type>, QtPrivate::TypeAndForceComplete<char *, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>
 
 
 >,

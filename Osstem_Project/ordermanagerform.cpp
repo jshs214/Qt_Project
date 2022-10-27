@@ -15,6 +15,7 @@ OrderManagerForm::OrderManagerForm(QWidget *parent) :
 
     /* ContextMenu의 remove 액션, 리스트의 데이터 삭제 */
     QAction* removeAction = new QAction(tr("&Remove"));
+    removeAction->setIcon(QIcon(":/images/eraser.png"));
     connect(removeAction, SIGNAL(triggered()), SLOT(removeItem()));
     menu = new QMenu;
     menu->addAction(removeAction);

@@ -26,21 +26,16 @@ MainWindow::MainWindow(QWidget *parent)
     ui->toolBar->setIconSize(QSize(66, 66));
     setContextMenuPolicy (Qt::NoContextMenu);
 
-
     clientForm = new ClientManagerForm(this);
-    clientForm->setWindowTitle(tr("Client Info"));
     connect(clientForm, SIGNAL(destroyed()),
             clientForm, SLOT(deleteLater()));
     productForm = new ProductManagerForm(this);
-    productForm->setWindowTitle(tr("Product Info"));
     connect(productForm, SIGNAL(destroyed()),
             productForm, SLOT(deleteLater()));
     orderForm = new OrderManagerForm(this);
-    orderForm->setWindowTitle(tr("Order Info"));
     connect(orderForm, SIGNAL(destroyed()),
             orderForm, SLOT(deleteLater()));
     serverForm = new ChatServerForm(this);
-    serverForm->setWindowTitle(tr("Chatting Server"));
     connect(serverForm, SIGNAL(destroyed()),
             serverForm, SLOT(deleteLater()));
 

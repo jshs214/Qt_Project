@@ -482,14 +482,14 @@ void ChatServerForm::on_sendButton_clicked()
                     sendArray.clear();
                     QDataStream out(&sendArray, QIODevice::WriteOnly);
                     out << Chat_Talk;
-                    //QString data ;
-                    //data = "<font color=red>" + "Manager" + "</font> : " + str ;
-                    //out.writeRawData(data.toStdString().data(), 1020);
+                    QString data ;
+                    data = QString("<font color=red>") + "Manager" + "</font> : " + str ;
+                    out.writeRawData(data.toStdString().data(), 1020);
 
-                    sendArray.append("<font color=red>");
-                    sendArray.append("Manager");
-                    sendArray.append("</font> : ");
-                    sendArray.append(str.toStdString().data());
+                    //sendArray.append("<font color=red>");
+                    //sendArray.append("Manager");
+                    //sendArray.append("</font> : ");
+                    //sendArray.append(str.toStdString().data());
                     sock->write(sendArray);
                 }
             }
