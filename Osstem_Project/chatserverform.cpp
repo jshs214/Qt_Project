@@ -104,7 +104,7 @@ void ChatServerForm::clientConnect( )
 /* 데이터를 받을 때 */
 void ChatServerForm::receiveData( )
 {
-    QTcpSocket *clientConnection = dynamic_cast<QTcpSocket *>(sender( ));   //어느 소켓에서 데이터를 받아왔는지(연결되어있는 소켓)
+    QTcpSocket *clientConnection = dynamic_cast<QTcpSocket *>(sender( ));   //어느 소켓에서 데이터를 받아왔는지
     QByteArray bytearray = clientConnection->read(BLOCK_SIZE);  //블록 크기만큼 읽음
 
     Chat_Status type;       // 채팅 프로토콜 타입
@@ -142,13 +142,13 @@ void ChatServerForm::receiveData( )
                     /* 사용자의 상태 변경 */
                     item->setText(0, "On");
                     item->setIcon(0, QIcon(":/images/yellowlight.png"));
-                    sendLogInOut(clientConnection, "true"); // 로그인 성공 유무를 보내는 메서드
+                    sendLogInOut(clientConnection, "true"); // 로그인 성공 유무를 전송
                 }
                 return;
             }
         }
         /* 로그인 실패 시 */
-        sendLogInOut(clientConnection, "false");    // 로그인 성공 유무를 보내는 메서드
+        sendLogInOut(clientConnection, "false");    // 로그인 성공 유무를 전송
 
         break;
     }
@@ -279,7 +279,7 @@ void ChatServerForm::receiveData( )
 /* 연결이 끊어지면 데이터 제거 */
 void ChatServerForm::removeClient()
 {
-    QTcpSocket *clientConnection = dynamic_cast<QTcpSocket *>(sender( ));
+    QTcpSocket *clientConnection = dynamic_cast<QTcpSocket *>(sender( ));   //어느 소켓에서 데이터를 받아왔는지
     if(clientConnection != nullptr){
         QString id =  clientPortIDHash[clientConnection->peerPort()];
         /* 사용자의 상태 변경 */
@@ -405,7 +405,7 @@ void ChatServerForm::acceptConnection()
 void ChatServerForm::readClient()
 {
     qDebug("Receiving file ...");
-    QTcpSocket* receivedSocket = dynamic_cast<QTcpSocket *>(sender( ));
+    QTcpSocket* receivedSocket = dynamic_cast<QTcpSocket *>(sender( )); //어느 소켓에서 데이터를 받아왔는지
 
     QString filename, name, id;
     if (byteReceived == 0) {        // 파일 전송 시작 : 파일에 대한 정보를 이용해서 QFile 객체 생성
@@ -482,6 +482,10 @@ void ChatServerForm::on_sendButton_clicked()
                     sendArray.clear();
                     QDataStream out(&sendArray, QIODevice::WriteOnly);
                     out << Chat_Talk;
+                    //QString data ;
+                    //data = "<font color=red>" + "Manager" + "</font> : " + str ;
+                    //out.writeRawData(data.toStdString().data(), 1020);
+
                     sendArray.append("<font color=red>");
                     sendArray.append("Manager");
                     sendArray.append("</font> : ");

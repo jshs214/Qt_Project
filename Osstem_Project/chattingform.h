@@ -19,29 +19,26 @@ class ChattingForm : public QWidget
     Q_OBJECT
 
 public:
-    const int PORT_NUMBER = 8000;
+    const int PORT_NUMBER = 8000;   //포트번호 8000번 고정
 
     explicit ChattingForm(QWidget *parent = nullptr);
     ~ChattingForm();
 
 private slots:
-    void receiveData( );			// 서버에서 데이터가 올 때
-    void sendData( );               // 서버로 데이터를 보낼 때
-    void disconnect( );
-    void sendProtocol(Chat_Status, char*, int = 1020);
-    void sendFile();
-    void goOnSend(qint64);
-
-    void on_logoutButton_clicked();
+    void receiveData( );		/* 서버에서 데이터가 올 때 */
+    void sendData( );           /* 서버로 메시지 전송 슬롯 */
+    void sendFile();            /* 서버로 파일 전송 슬롯 */
+    void goOnSend(qint64);      /* 파일 전송 시 여러번 나눠서 전송하는 슬롯 */
+    void disconnect( );         /* 연결이 끊어졌을 때 상태 변경 */
+    void sendProtocol(Chat_Status, char*, int = 1020);  /* 프로토콜 생성해서 서버로 전송 */
+    void on_logoutButton_clicked();     /* 로그아웃 슬롯 */
 
 private:
     Ui::ChattingForm *ui;
-    void closeEvent(QCloseEvent*) override;
+    void closeEvent(QCloseEvent*) override; /* 창이 닫힐 때 서버에 연결 접속 메시지를 보내고 종료 */
 
-    // 서버로 보내는 메시지 입력용
-    // 메시지 전송
     QTcpSocket *clientSocket;		// 클라이언트용 소켓
-    QTcpSocket *fileClient;
+    QTcpSocket *fileClient;         // 파일용 소켓
     QProgressDialog* progressDialog;    // 파일 진행 확인
     QFile* file;            // 서버로 보내는 파일
     qint64 loadSize;        // 파일의 크기

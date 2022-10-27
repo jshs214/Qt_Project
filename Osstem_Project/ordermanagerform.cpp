@@ -36,6 +36,8 @@ OrderManagerForm::OrderManagerForm(QWidget *parent) :
     ui->stockLineEdit->setValidator(new QIntValidator(0, 9999, this) ); //수량에 0~9999 범위의 숫자만 받도록
 
     connect(ui->searchLineEdit, SIGNAL(returnPressed()), this, SLOT(on_searchPushButton_clicked()));
+
+    ui->clearButton->setIcon(QIcon(":/images/eraser.png"));
 }
 
 /* 파일의 데이터 입력하는 메서드 */

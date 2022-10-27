@@ -7,7 +7,7 @@
 LogThread::LogThread(QObject *parent)
     : QThread{parent}
 {
-    QString format = "yyyyMMdd_hhmmss";
+    QString format = "yyyyMMdd_hhmmss"; //파일 포맷
     filename = QString("log_%1.txt").arg(QDateTime::currentDateTime().toString(format));
 }
 
@@ -19,18 +19,19 @@ void LogThread::run()
     }
 }
 
+/* 로그 입력 */
 void LogThread::appendData(QTreeWidgetItem* item)
 {
     itemList.append(item);
 }
 
+/* 로그 데이터 저장 */
 void LogThread::saveData()
 {
     if(itemList.count() > 0) {
         QFile file(filename);
         if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
             return;
-
         QTextStream out(&file);
         foreach(auto item, itemList) {
             out << item->text(0) << ", ";

@@ -29,6 +29,7 @@ ClientManagerForm::ClientManagerForm(QWidget *parent) :
     regExpValidator->setRegularExpression(QRegularExpression("^\\d{2,3}-\\d{3,4}-\\d{4}$"));
     ui->phoneNumberLineEdit->setValidator(regExpValidator);
 
+    ui->clearButton->setIcon(QIcon(":/images/eraser.png"));
 }
 /* 파일의 데이터 입력하는 메서드 */
 void ClientManagerForm::loadData()

@@ -22,8 +22,8 @@ signals:
     void send(int data);
 
 public slots:
-    void appendData(QTreeWidgetItem*);
-    void saveData();
+    void appendData(QTreeWidgetItem*);  /* 로그 입력 */
+    void saveData();    /* 로그 데이터 저장 */
 };
 
 #endif // LOGTHREAD_H

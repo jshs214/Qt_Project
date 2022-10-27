@@ -41,10 +41,10 @@ private:
     QMenu* menu;            //ContextMenu
     QFile* file;            //QFile 객체
     QProgressDialog* progressDialog;    //progressDialog
-    qint64 totalSize;       //
-    qint64 byteReceived;    //
-    QByteArray inBlock;     //
-    LogThread* logThread;   //
+    qint64 totalSize;       // 데이터의 총 크기
+    qint64 byteReceived;    // 소켓에서 읽어온 데이터의 바이트의 크기
+    QByteArray inBlock;     // 소켓에서 읽어온 데이터의 바이트
+    LogThread* logThread;
 
     void sendLogInOut(QTcpSocket* sock , const char* data);     /* 로그인 성공 유무를 보내는 메서드 */
     void sendChatList();    /* Chat_List로 현재 채팅방 참여인원 전달 */

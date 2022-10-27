@@ -128,7 +128,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="clearbutton">
+            <widget class="QPushButton" name="clearButton">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -148,11 +148,11 @@
               </size>
              </property>
              <property name="text">
-              <string>clear</string>
+              <string/>
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>:/images/erase.png</normaloff>:/images/erase.png</iconset>
+               <normaloff>images/eraser.png</normaloff>images/eraser.png</iconset>
              </property>
              <property name="iconSize">
               <size>

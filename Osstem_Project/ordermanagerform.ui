@@ -269,11 +269,11 @@
               </size>
              </property>
              <property name="text">
-              <string>clear</string>
+              <string/>
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>:/images/erase.png</normaloff>:/images/erase.png</iconset>
+               <normaloff>images/eraser.png</normaloff>images/eraser.png</iconset>
              </property>
              <property name="iconSize">
               <size>

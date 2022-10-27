@@ -26,7 +26,7 @@ ProductManagerForm::ProductManagerForm(QWidget *parent) :
     ui->priceLineEdit->setValidator( new QIntValidator(0, 99999999, this) );    //숫자만 받도록
     ui->stockLineEdit->setValidator( new QIntValidator(0, 9999, this) );        //숫자만 받도록
 
-
+    ui->clearButton->setIcon(QIcon(":/images/eraser.png"));
 }
 /* 파일의 데이터 입력하는 메서드 */
 void ProductManagerForm::loadData()
