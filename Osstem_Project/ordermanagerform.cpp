@@ -19,8 +19,8 @@ OrderManagerForm::OrderManagerForm(QWidget *parent) :
     connect(removeAction, SIGNAL(triggered()), SLOT(removeItem()));
     menu = new QMenu;
     menu->addAction(removeAction);
-    ui->treeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(ui->treeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu(QPoint)));
+    ui->orderTreeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(ui->orderTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu(QPoint)));
 
     /* ui의 트리위젯들의 열 너비 설정 */
     ui->clientTreeWidget->QTreeView::setColumnWidth(0,35);
@@ -29,16 +29,15 @@ OrderManagerForm::OrderManagerForm(QWidget *parent) :
     ui->productTreeWidget->QTreeView::setColumnWidth(0,35);
     ui->productTreeWidget->QTreeView::setColumnWidth(1,70);
     ui->productTreeWidget->QTreeView::setColumnWidth(2,95);
-    ui->treeWidget->QTreeView::setColumnWidth(0,60);
-    ui->treeWidget->QTreeView::setColumnWidth(1,100);
-    ui->treeWidget->QTreeView::setColumnWidth(2,100);
-    ui->treeWidget->QTreeView::setColumnWidth(3,40);
+    ui->orderTreeWidget->QTreeView::setColumnWidth(0,60);
+    ui->orderTreeWidget->QTreeView::setColumnWidth(1,100);
+    ui->orderTreeWidget->QTreeView::setColumnWidth(2,100);
+    ui->orderTreeWidget->QTreeView::setColumnWidth(3,40);
 
     ui->stockLineEdit->setValidator(new QIntValidator(0, 9999, this) ); //수량에 0~9999 범위의 숫자만 받도록
 
     connect(ui->searchLineEdit, SIGNAL(returnPressed()), this, SLOT(on_searchPushButton_clicked()));
 
-    ui->clearButton->setIcon(QIcon(":/images/eraser.png"));
 }
 
 /* 파일의 데이터 입력하는 메서드 */
@@ -56,7 +55,7 @@ void OrderManagerForm::loadData()
         if(row.size()) {
             int id = row[0].toInt();
             OrderItem* o = new OrderItem(id, row[1], row[2], row[3], row[4], row[5], row[6]);
-            ui->treeWidget->addTopLevelItem(o);
+            ui->orderTreeWidget->addTopLevelItem(o);
             orderList.insert(id, o);
         }
     }
@@ -127,6 +126,8 @@ void OrderManagerForm::receive_ClientTreewidget_itemclicked(ClientItem* clientLi
     ui->clientTreeWidget->addTopLevelItem(item);
 }
 
+
+
 /* 제품 리스트 데이터 클릭 시 출력하는 슬롯 */
 void OrderManagerForm::receive_ProductTreewidget_itemclicked(ProductItem* productList)
 {
@@ -174,7 +175,7 @@ void OrderManagerForm::on_clientTreeWidget_itemClicked(QTreeWidgetItem *item, in
     CLineEdit = item->text(0)+" ("+item->text(1)+")";
 
     ui->cIdLineEdit->setText(CLineEdit);
-    ui->addresslineEdit->setText(item->text(3));
+    ui->addressLineEdit->setText(item->text(3));
 }
 
 /* 제품정보 데이터 클릭 시 입력되는 슬롯 */
@@ -187,7 +188,7 @@ void OrderManagerForm::on_productTreeWidget_itemClicked(QTreeWidgetItem *item, i
     pLineEdit = item->text(0)+" ("+item->text(1)+")";
 
     ui->pIdLineEdit->setText(pLineEdit);
-    ui->pricelineEdit->setText(item->text(2));
+    ui->priceLineEdit->setText(item->text(2));
 }
 
 /* 주문정보추가를 위한 슬롯 */
@@ -209,8 +210,8 @@ void OrderManagerForm::on_addPushButton_clicked()
     client = ui->cIdLineEdit->text();
     product = ui->pIdLineEdit->text();
     stock = ui->stockLineEdit->text();
-    price = ui->pricelineEdit->text();
-    address = ui->addresslineEdit->text();
+    price = ui->priceLineEdit->text();
+    address = ui->addressLineEdit->text();
 
     productTree_Stock = pItem->text(3); //제품리스트의 재고
     productKey =  ui->pIdLineEdit->text().left(4);   //제품 키값
@@ -236,13 +237,13 @@ void OrderManagerForm::on_addPushButton_clicked()
     {
         OrderItem* o = new OrderItem(id, client, product, stock, price, sum, address);
         orderList.insert(id, o);
-        ui->treeWidget->addTopLevelItem(o);
+        ui->orderTreeWidget->addTopLevelItem(o);
 
         ui->cIdLineEdit->clear();
         ui->pIdLineEdit->clear();
         ui->stockLineEdit->clear();
-        ui->addresslineEdit->clear();
-        ui->pricelineEdit->clear();
+        ui->addressLineEdit->clear();
+        ui->priceLineEdit->clear();
     }
 }
 
@@ -259,7 +260,7 @@ void OrderManagerForm::on_searchPushButton_clicked()
     int i = ui->searchComboBox->currentIndex(); //무엇으로 검색할지 콤보박스의 인덱스를 가져옴
 
     {   /* 검색과 일치하거나 포함하는 문자열이 있으면 hidden(false) */
-        auto items = ui->treeWidget->findItems(ui->searchLineEdit->text(), Qt::MatchContains, i);
+        auto items = ui->orderTreeWidget->findItems(ui->searchLineEdit->text(), Qt::MatchContains, i);
         foreach(auto i, items) {
             OrderItem* o = static_cast<OrderItem*>(i);
             o->setHidden(false);    //검색된 데이터의 리스트만 출력되게
@@ -280,7 +281,7 @@ void OrderManagerForm::on_statePushButton_clicked()
 /* 주문정보변경을 위한 슬롯 */
 void OrderManagerForm::on_modifyPushButton_clicked()
 {
-    QTreeWidgetItem* item = ui->treeWidget->currentItem();
+    QTreeWidgetItem* item = ui->orderTreeWidget->currentItem();
     QTreeWidgetItem* pItem = ui->productTreeWidget->currentItem();
     /* 변경할 제품이 선택된 경우*/
     if(item != nullptr && pItem != nullptr) {
@@ -297,8 +298,8 @@ void OrderManagerForm::on_modifyPushButton_clicked()
         client = ui->cIdLineEdit->text();
         product = ui->pIdLineEdit->text();
         stock = ui->stockLineEdit->text();
-        address = ui->addresslineEdit->text();
-        price = ui->pricelineEdit->text();
+        address = ui->addressLineEdit->text();
+        price = ui->priceLineEdit->text();
 
         if(stock ==nullptr) return; // 수량 입력 안할 경우 예외처리
 
@@ -346,15 +347,15 @@ void OrderManagerForm::on_modifyPushButton_clicked()
 /* ContextMenu 슬롯 */
 void OrderManagerForm::showContextMenu(const QPoint &pos)
 {
-    if(ui->treeWidget->currentItem() == nullptr)    return; //에외처리
-    QPoint globalPos = ui->treeWidget->mapToGlobal(pos);
+    if(ui->orderTreeWidget->currentItem() == nullptr)    return; //에외처리
+    QPoint globalPos = ui->orderTreeWidget->mapToGlobal(pos);
     menu->exec(globalPos);
 }
 
 /* 주문정보의 데이터(트리위젯)의 리스트 제거 슬롯 */
 void OrderManagerForm::removeItem()
 {
-    QTreeWidgetItem* item = ui->treeWidget->currentItem();
+    QTreeWidgetItem* item = ui->orderTreeWidget->currentItem();
     int id = item->text(0).toInt();
     QString ordertree_stock,ordertree_product;
 
@@ -366,22 +367,22 @@ void OrderManagerForm::removeItem()
     /* 주문정보의 id 값의 데이터를 리스트에서 제거, 데이터 clear */
     if(item != nullptr) {   //예외처리
         orderList.remove(id);
-        ui->treeWidget->takeTopLevelItem(ui->treeWidget->indexOfTopLevelItem(item));
-        ui->treeWidget->update();
+        ui->orderTreeWidget->takeTopLevelItem(ui->orderTreeWidget->indexOfTopLevelItem(item));
+        ui->orderTreeWidget->update();
 
         ui->idLineEdit->clear();
         ui->cIdLineEdit->clear();
         ui->pIdLineEdit->clear();
         ui->stockLineEdit->clear();
-        ui->addresslineEdit->clear();
-        ui->pricelineEdit->clear();
+        ui->addressLineEdit->clear();
+        ui->priceLineEdit->clear();
         ui->clientTreeWidget->clear();
         ui->productTreeWidget->clear();
     }
 }
 
 /* 등록된 주문내역 클릭 시 관련정보 출력 슬롯*/
-void OrderManagerForm::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
+void OrderManagerForm::on_orderTreeWidget_itemClicked(QTreeWidgetItem *item, int column)
 {
     Q_UNUSED(column);
 
@@ -394,14 +395,15 @@ void OrderManagerForm::on_treeWidget_itemClicked(QTreeWidgetItem *item, int colu
     ui->cIdLineEdit->setText(item->text(1));
     ui->pIdLineEdit->setText(item->text(2));
     ui->stockLineEdit->setText(item->text(3));
-    ui->pricelineEdit->setText(item->text(4));
-    ui->addresslineEdit->setText(item->text(6));
+    ui->priceLineEdit->setText(item->text(4));
+    ui->addressLineEdit->setText(item->text(6));
 
     /* 고객, 제품의 리스트를 불러오기 위한 시그널 */
     emit clientKeySent(clientkey);      //클릭 시, 고객, 제품의 리스트를 불러오기 위한 시그널
     emit productKeySent(productkey);
-
 }
+
+
 
 /* 버튼 클릭 시 입력 값 초기화 하는 슬롯 */
 void OrderManagerForm::on_clearButton_clicked()
@@ -411,10 +413,12 @@ void OrderManagerForm::on_clearButton_clicked()
     ui->cIdLineEdit->clear();
     ui->pIdLineEdit->clear();
     ui->stockLineEdit->clear();
-    ui->addresslineEdit->clear();
-    ui->pricelineEdit->clear();
+    ui->addressLineEdit->clear();
+    ui->priceLineEdit->clear();
     ui->searchLineEdit->clear();
     ui->clientLineEdit->clear();
     ui->productLineEdit->clear();
 }
+
+
 

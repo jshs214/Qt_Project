@@ -31,13 +31,13 @@ private slots:
     void on_statePushButton_clicked();      /* 검색결과 창에서 고객정보관리로 돌아오는 슬롯 */
     void showContextMenu(const QPoint &);   /* ContextMenu 슬롯 */
     void removeItem();  /* 고객정보의 데이터(트리위젯)의 리스트 제거 슬롯 */
-
-    void on_treeWidget_itemClicked(QTreeWidgetItem *item, int column);
-
+    void on_clientTreeWidget_itemClicked(QTreeWidgetItem *item, int column);    /* 등록된 고객정보 클릭 시 관련정보 출력 슬롯*/
     void receiveClientName(QString);     /* Order에서 고객 id나 이름을 받아오는 슬롯*/
     void receiveClientKey(int);          /* 고객 id 값을 받아오는 슬롯 */
 
     void on_clearButton_clicked();       /* 버튼 클릭 시 입력 값 초기화 하는 슬롯 */
+
+
 
 private:
     int makeId();   /* ID(키 값) 생성 메서드*/

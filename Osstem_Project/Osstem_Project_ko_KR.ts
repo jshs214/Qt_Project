@@ -119,7 +119,7 @@
     </message>
     <message>
         <location filename="chatserverform.cpp" line="58"/>
-        <location filename="chatserverform.cpp" line="321"/>
+        <location filename="chatserverform.cpp" line="320"/>
         <source>Invite</source>
         <translation>초대</translation>
     </message>
@@ -143,27 +143,33 @@
         <location filename="chatserverform.cpp" line="166"/>
         <location filename="chatserverform.cpp" line="167"/>
         <location filename="chatserverform.cpp" line="188"/>
-        <location filename="chatserverform.cpp" line="324"/>
-        <location filename="chatserverform.cpp" line="350"/>
-        <location filename="chatserverform.cpp" line="479"/>
-        <location filename="chatserverform.cpp" line="526"/>
+        <location filename="chatserverform.cpp" line="323"/>
+        <location filename="chatserverform.cpp" line="349"/>
+        <location filename="chatserverform.cpp" line="478"/>
+        <location filename="chatserverform.cpp" line="520"/>
         <source>Chat</source>
         <translation>활동 중</translation>
     </message>
     <message>
-        <location filename="chatserverform.cpp" line="399"/>
+        <location filename="chatserverform.cpp" line="398"/>
         <source>Connected, preparing to receive files!</source>
         <translation>연결됨, 파일 수신 준비중 !</translation>
     </message>
     <message>
-        <location filename="chatserverform.cpp" line="407"/>
+        <location filename="chatserverform.cpp" line="406"/>
         <source>Receiving file ...</source>
         <translation>파일을 받는중...</translation>
     </message>
     <message>
-        <location filename="chatserverform.cpp" line="458"/>
+        <location filename="chatserverform.cpp" line="457"/>
         <source>%1 receive completed</source>
         <translation>%1 수신 완료</translation>
+    </message>
+    <message>
+        <location filename="chatserverform.cpp" line="474"/>
+        <location filename="chatserverform.cpp" line="485"/>
+        <source>Manager</source>
+        <translation type="unfinished">관리자</translation>
     </message>
 </context>
 <context>
@@ -207,7 +213,7 @@
         <location filename="chattingform.ui" line="146"/>
         <location filename="chattingform.cpp" line="77"/>
         <location filename="chattingform.cpp" line="122"/>
-        <location filename="chattingform.cpp" line="320"/>
+        <location filename="chattingform.cpp" line="322"/>
         <source>Log In</source>
         <translation>로그인</translation>
     </message>
@@ -235,14 +241,14 @@
         <location filename="chattingform.cpp" line="87"/>
         <location filename="chattingform.cpp" line="102"/>
         <location filename="chattingform.cpp" line="155"/>
-        <location filename="chattingform.cpp" line="185"/>
+        <location filename="chattingform.cpp" line="187"/>
         <source>Chat in</source>
         <translation>채팅방 입장</translation>
     </message>
     <message>
         <location filename="chattingform.cpp" line="92"/>
         <location filename="chattingform.cpp" line="97"/>
-        <location filename="chattingform.cpp" line="204"/>
+        <location filename="chattingform.cpp" line="206"/>
         <source>Chat Out</source>
         <translation>채팅방 나가기</translation>
     </message>
@@ -262,54 +268,54 @@
         <translation>로그인 성공하였습니다.</translation>
     </message>
     <message>
-        <location filename="chattingform.cpp" line="165"/>
+        <location filename="chattingform.cpp" line="166"/>
         <source>Error</source>
         <translation>오류</translation>
     </message>
     <message>
-        <location filename="chattingform.cpp" line="166"/>
+        <location filename="chattingform.cpp" line="167"/>
         <source>Failed Login</source>
         <translation>로그인 실패하였습니다.</translation>
     </message>
     <message>
-        <location filename="chattingform.cpp" line="180"/>
-        <location filename="chattingform.cpp" line="199"/>
-        <location filename="chattingform.cpp" line="314"/>
+        <location filename="chattingform.cpp" line="182"/>
+        <location filename="chattingform.cpp" line="201"/>
+        <location filename="chattingform.cpp" line="316"/>
         <source>Chatting Client</source>
         <translation>고객 채팅</translation>
     </message>
     <message>
-        <location filename="chattingform.cpp" line="181"/>
+        <location filename="chattingform.cpp" line="183"/>
         <source>Kick out from Server</source>
         <translation>서버로부터 강퇴당했습니다.</translation>
     </message>
     <message>
-        <location filename="chattingform.cpp" line="200"/>
+        <location filename="chattingform.cpp" line="202"/>
         <source>Invited from Server</source>
         <translation>서버로부터 초대받았습니다.</translation>
     </message>
     <message>
-        <location filename="chattingform.cpp" line="240"/>
+        <location filename="chattingform.cpp" line="242"/>
         <source>Me : </source>
         <translation>나 : </translation>
     </message>
     <message>
-        <location filename="chattingform.cpp" line="258"/>
+        <location filename="chattingform.cpp" line="260"/>
         <source>file %1 is opened</source>
         <translation>파일 %1 열렸습니다</translation>
     </message>
     <message>
-        <location filename="chattingform.cpp" line="289"/>
+        <location filename="chattingform.cpp" line="291"/>
         <source>Sending file %1</source>
         <translation>파일을 %1 전송중</translation>
     </message>
     <message>
-        <location filename="chattingform.cpp" line="306"/>
+        <location filename="chattingform.cpp" line="308"/>
         <source>File sending completed!</source>
         <translation>파일 전송 완료!</translation>
     </message>
     <message>
-        <location filename="chattingform.cpp" line="315"/>
+        <location filename="chattingform.cpp" line="317"/>
         <source>Disconnect from Server</source>
         <translation>서버에서 연결 해제</translation>
     </message>
@@ -370,36 +376,41 @@
         <translation>변경</translation>
     </message>
     <message>
-        <location filename="clientmanagerform.ui" line="171"/>
+        <location filename="clientmanagerform.ui" line="132"/>
+        <source>Clear</source>
+        <translation type="unfinished">지우기</translation>
+    </message>
+    <message>
+        <location filename="clientmanagerform.ui" line="143"/>
         <source>&amp;Search</source>
         <translation>검색창</translation>
     </message>
     <message>
-        <location filename="clientmanagerform.ui" line="180"/>
-        <location filename="clientmanagerform.ui" line="239"/>
+        <location filename="clientmanagerform.ui" line="152"/>
+        <location filename="clientmanagerform.ui" line="211"/>
         <source>ID</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="clientmanagerform.ui" line="185"/>
-        <location filename="clientmanagerform.ui" line="244"/>
+        <location filename="clientmanagerform.ui" line="157"/>
+        <location filename="clientmanagerform.ui" line="216"/>
         <source>Name</source>
         <translation>이름</translation>
     </message>
     <message>
-        <location filename="clientmanagerform.ui" line="190"/>
-        <location filename="clientmanagerform.ui" line="249"/>
+        <location filename="clientmanagerform.ui" line="162"/>
+        <location filename="clientmanagerform.ui" line="221"/>
         <source>Phone Number</source>
         <translation>전화번호</translation>
     </message>
     <message>
-        <location filename="clientmanagerform.ui" line="195"/>
-        <location filename="clientmanagerform.ui" line="254"/>
+        <location filename="clientmanagerform.ui" line="167"/>
+        <location filename="clientmanagerform.ui" line="226"/>
         <source>Address</source>
         <translation>주소</translation>
     </message>
     <message>
-        <location filename="clientmanagerform.ui" line="206"/>
+        <location filename="clientmanagerform.ui" line="178"/>
         <source>S&amp;earch</source>
         <translation>검색</translation>
     </message>
@@ -488,26 +499,6 @@ Go to ClientInfoManager.</source>
         <source>Ctrl+4</source>
         <translation></translation>
     </message>
-    <message>
-        <location filename="mainwindow.cpp" line="31"/>
-        <source>Client Info</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.cpp" line="35"/>
-        <source>Product Info</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.cpp" line="39"/>
-        <source>Order Info</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.cpp" line="43"/>
-        <source>Chatting Server</source>
-        <translation></translation>
-    </message>
 </context>
 <context>
     <name>OrderManagerForm</name>
@@ -518,9 +509,9 @@ Go to ClientInfoManager.</source>
     </message>
     <message>
         <location filename="ordermanagerform.ui" line="32"/>
-        <location filename="ordermanagerform.ui" line="41"/>
-        <location filename="ordermanagerform.cpp" line="196"/>
-        <location filename="ordermanagerform.cpp" line="272"/>
+        <location filename="ordermanagerform.ui" line="39"/>
+        <location filename="ordermanagerform.cpp" line="198"/>
+        <location filename="ordermanagerform.cpp" line="274"/>
         <source>OrderManagerInfo</source>
         <translation>주문정보관리</translation>
     </message>
@@ -553,21 +544,21 @@ Go to ClientInfoManager.</source>
     </message>
     <message>
         <location filename="ordermanagerform.ui" line="93"/>
-        <location filename="ordermanagerform.ui" line="291"/>
-        <location filename="ordermanagerform.ui" line="393"/>
+        <location filename="ordermanagerform.ui" line="263"/>
+        <location filename="ordermanagerform.ui" line="365"/>
         <source>Address</source>
         <translation>주소</translation>
     </message>
     <message>
         <location filename="ordermanagerform.ui" line="115"/>
         <location filename="ordermanagerform.ui" line="221"/>
-        <location filename="ordermanagerform.ui" line="383"/>
+        <location filename="ordermanagerform.ui" line="355"/>
         <source>Price</source>
         <translation>가격</translation>
     </message>
     <message>
         <location filename="ordermanagerform.ui" line="120"/>
-        <location filename="ordermanagerform.ui" line="378"/>
+        <location filename="ordermanagerform.ui" line="350"/>
         <source>Stock</source>
         <translation>재고</translation>
     </message>
@@ -590,7 +581,7 @@ Go to ClientInfoManager.</source>
         <location filename="ordermanagerform.ui" line="168"/>
         <location filename="ordermanagerform.ui" line="191"/>
         <location filename="ordermanagerform.ui" line="231"/>
-        <location filename="ordermanagerform.ui" line="301"/>
+        <location filename="ordermanagerform.ui" line="273"/>
         <source>Click_List</source>
         <translation>목록에서 선택해주세요</translation>
     </message>
@@ -620,43 +611,48 @@ Go to ClientInfoManager.</source>
         <translation>변경</translation>
     </message>
     <message>
-        <location filename="ordermanagerform.ui" line="310"/>
+        <location filename="ordermanagerform.ui" line="254"/>
+        <source>Clear</source>
+        <translation type="unfinished">지우기</translation>
+    </message>
+    <message>
+        <location filename="ordermanagerform.ui" line="282"/>
         <source>&amp;Search</source>
         <translation>검색 창</translation>
     </message>
     <message>
-        <location filename="ordermanagerform.ui" line="319"/>
-        <location filename="ordermanagerform.ui" line="363"/>
+        <location filename="ordermanagerform.ui" line="291"/>
+        <location filename="ordermanagerform.ui" line="335"/>
         <source>OrderNum</source>
         <translation>주문번호</translation>
     </message>
     <message>
-        <location filename="ordermanagerform.ui" line="324"/>
+        <location filename="ordermanagerform.ui" line="296"/>
         <source>Client (Name or ID)</source>
         <translation>고객 (ID나 이름)</translation>
     </message>
     <message>
-        <location filename="ordermanagerform.ui" line="329"/>
+        <location filename="ordermanagerform.ui" line="301"/>
         <source>Product (Name or ID)</source>
         <translation>제품 (ID나 이름)</translation>
     </message>
     <message>
-        <location filename="ordermanagerform.ui" line="340"/>
+        <location filename="ordermanagerform.ui" line="312"/>
         <source>S&amp;earch</source>
         <translation>검색</translation>
     </message>
     <message>
-        <location filename="ordermanagerform.ui" line="368"/>
+        <location filename="ordermanagerform.ui" line="340"/>
         <source>ClientName</source>
         <translation>고객명</translation>
     </message>
     <message>
-        <location filename="ordermanagerform.ui" line="373"/>
+        <location filename="ordermanagerform.ui" line="345"/>
         <source>Product</source>
         <translation>제품</translation>
     </message>
     <message>
-        <location filename="ordermanagerform.ui" line="388"/>
+        <location filename="ordermanagerform.ui" line="360"/>
         <source>Sum</source>
         <translation>총 합</translation>
     </message>
@@ -666,39 +662,39 @@ Go to ClientInfoManager.</source>
         <translation>제거</translation>
     </message>
     <message>
-        <location filename="ordermanagerform.cpp" line="198"/>
-        <location filename="ordermanagerform.cpp" line="307"/>
-        <location filename="ordermanagerform.cpp" line="313"/>
-        <location filename="ordermanagerform.cpp" line="338"/>
+        <location filename="ordermanagerform.cpp" line="200"/>
+        <location filename="ordermanagerform.cpp" line="309"/>
+        <location filename="ordermanagerform.cpp" line="315"/>
+        <location filename="ordermanagerform.cpp" line="340"/>
         <source>Error</source>
         <translation>오류</translation>
     </message>
     <message>
-        <location filename="ordermanagerform.cpp" line="199"/>
+        <location filename="ordermanagerform.cpp" line="201"/>
         <source>This is Search Info.
 Go to OrderManagerInfo.</source>
         <translation>검색 결과 화면입니다.
 제품 정보관리 화면으로 이동하세요.</translation>
     </message>
     <message>
-        <location filename="ordermanagerform.cpp" line="251"/>
+        <location filename="ordermanagerform.cpp" line="253"/>
         <source>Search Info</source>
         <translation>검색 결과</translation>
     </message>
     <message>
-        <location filename="ordermanagerform.cpp" line="308"/>
+        <location filename="ordermanagerform.cpp" line="310"/>
         <source>out of stock
 You can change up to %0.</source>
         <translation>재고가 부족합니다
 %0개까지 변경 가능합니다.</translation>
     </message>
     <message>
-        <location filename="ordermanagerform.cpp" line="314"/>
+        <location filename="ordermanagerform.cpp" line="316"/>
         <source>The selected product name and the selected product name are different.</source>
         <translation>변경할 제품과 선택된 제품이 다릅니다.</translation>
     </message>
     <message>
-        <location filename="ordermanagerform.cpp" line="339"/>
+        <location filename="ordermanagerform.cpp" line="341"/>
         <source>Please select a product from the product list.</source>
         <translation>변경할 제품을 선택해주세요.</translation>
     </message>
@@ -713,6 +709,7 @@ You can change up to %0.</source>
     <message>
         <location filename="productmanagerform.ui" line="32"/>
         <location filename="productmanagerform.ui" line="41"/>
+        <location filename="productmanagerform.cpp" line="87"/>
         <location filename="productmanagerform.cpp" line="154"/>
         <source>ProductInfoManager</source>
         <translation>제품정보관리</translation>
@@ -759,36 +756,41 @@ You can change up to %0.</source>
         <translation>변경</translation>
     </message>
     <message>
-        <location filename="productmanagerform.ui" line="172"/>
+        <location filename="productmanagerform.ui" line="133"/>
+        <source>Clear</source>
+        <translation type="unfinished">지우기</translation>
+    </message>
+    <message>
+        <location filename="productmanagerform.ui" line="144"/>
         <source>&amp;Search</source>
         <translation>검색창</translation>
     </message>
     <message>
-        <location filename="productmanagerform.ui" line="181"/>
-        <location filename="productmanagerform.ui" line="240"/>
+        <location filename="productmanagerform.ui" line="153"/>
+        <location filename="productmanagerform.ui" line="212"/>
         <source>ID</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="productmanagerform.ui" line="186"/>
-        <location filename="productmanagerform.ui" line="245"/>
+        <location filename="productmanagerform.ui" line="158"/>
+        <location filename="productmanagerform.ui" line="217"/>
         <source>Name</source>
         <translation>이름</translation>
     </message>
     <message>
-        <location filename="productmanagerform.ui" line="191"/>
-        <location filename="productmanagerform.ui" line="250"/>
+        <location filename="productmanagerform.ui" line="163"/>
+        <location filename="productmanagerform.ui" line="222"/>
         <source>Price</source>
         <translation>가격</translation>
     </message>
     <message>
-        <location filename="productmanagerform.ui" line="196"/>
-        <location filename="productmanagerform.ui" line="255"/>
+        <location filename="productmanagerform.ui" line="168"/>
+        <location filename="productmanagerform.ui" line="227"/>
         <source>Stock</source>
         <translation>재고</translation>
     </message>
     <message>
-        <location filename="productmanagerform.ui" line="207"/>
+        <location filename="productmanagerform.ui" line="179"/>
         <source>S&amp;earch</source>
         <translation>검색</translation>
     </message>
@@ -799,7 +801,7 @@ You can change up to %0.</source>
     </message>
     <message>
         <location filename="productmanagerform.cpp" line="89"/>
-        <location filename="productmanagerform.cpp" line="232"/>
+        <location filename="productmanagerform.cpp" line="233"/>
         <source>Error</source>
         <translation>오류</translation>
     </message>
@@ -816,7 +818,7 @@ Go to ProductInfoManager.</source>
         <translation>검색 결과</translation>
     </message>
     <message>
-        <location filename="productmanagerform.cpp" line="233"/>
+        <location filename="productmanagerform.cpp" line="234"/>
         <source>out of stock
 You can order up to %0.</source>
         <translation>재고 부족

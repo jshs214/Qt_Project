@@ -42,8 +42,10 @@ private slots:
     void showContextMenu(const QPoint &);   /* ContextMenu 슬롯 */
     void removeItem();  /* QAction을 위한 데이터 제거 슬롯 */
 
-    void on_treeWidget_itemClicked(QTreeWidgetItem *item, int column); /* 주문내역 클릭 시 관련정보 출력 슬롯*/
+    void on_orderTreeWidget_itemClicked(QTreeWidgetItem *item, int column); /* 주문내역 클릭 시 관련정보 출력 슬롯*/
     void on_clearButton_clicked();/* 버튼 클릭 시 입력 값 초기화 하는 슬롯 */
+
+
 
 private:
     int makeId();   /* ID(키 값) 생성 메서드*/

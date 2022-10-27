@@ -1,5 +1,4 @@
 #include "mainwindow.h"
-#include "qmenubar.h"
 #include "ui_mainwindow.h"
 
 #include "chattingform.h"
@@ -18,7 +17,7 @@ MainWindow::MainWindow(QWidget *parent)
     /* ui 툴바 및 액션 설정 */
     ui->toolBar->setAllowedAreas(Qt::RightToolBarArea);
     ui->actionClient->setIcon(QIcon(":/images/client.png"));
-    ui->actionproduct->setIcon(QIcon(":/images/product.png"));
+    ui->actionProduct->setIcon(QIcon(":/images/product.png"));
     ui->actionOrder->setIcon(QIcon(":/images/order.png"));
     ui->actionServer->setIcon(QIcon(":/images/server.png"));
     ui->actionChat->setIcon(QIcon(":/images/chat.png"));
@@ -84,11 +83,13 @@ MainWindow::MainWindow(QWidget *parent)
     ui->stackedWidget->insertWidget(1, productForm);
     ui->stackedWidget->insertWidget(2, orderForm);
     ui->stackedWidget->insertWidget(3, serverForm);
+
     clientForm->showMaximized();
     ui->stackedWidget->setCurrentIndex(0);
     this->setWindowTitle("Qt_Project");
 }
 
+/* 소멸자에서 메모리 해제 */
 MainWindow::~MainWindow()
 {
     delete clientForm;
@@ -106,10 +107,11 @@ void MainWindow::on_actionClient_triggered()
 }
 
 /* 제품정보 슬롯 */
-void MainWindow::on_actionproduct_triggered()
+void MainWindow::on_actionProduct_triggered()
 {
     ui->stackedWidget->setCurrentIndex(1);
 }
+
 
 /* 주문정보 슬롯 */
 void MainWindow::on_actionOrder_triggered()
@@ -129,5 +131,6 @@ void MainWindow::on_actionChat_triggered()
     chattingForm = new ChattingForm;
     chattingForm->show();
 }
+
 
 

@@ -162,8 +162,10 @@ void ChattingForm::receiveData( )
         /* 로그인 실패 시 경고메시지 출력 후 종료 */
         else
         {
+            clientSocket->blockSignals(true);   //로그인 실패 시 소켓 읽어오는 시그널 차단.
             QMessageBox::critical(this, tr("Error"), \
                                   tr("Failed Login"));
+            clientSocket->blockSignals(false);  //로그인 실패 시 소켓 읽어오는 시그널 해제.
         }
         break;
     case Chat_Talk:     // 채팅

@@ -73,7 +73,7 @@ ChatServerForm::ChatServerForm(QWidget *parent) :
     logThread = new LogThread(this);
     logThread->start();
 
-    connect(ui->saveButton, SIGNAL(clicked()), logThread, SLOT(saveData()));
+    connect(ui->savePushButton, SIGNAL(clicked()), logThread, SLOT(saveData()));
 
     qDebug() << tr("The server is running on port %1.").arg(chatServer->serverPort( ));
     ui->stateLineedit->setText(tr("The server is running on port %1.").arg(chatServer->serverPort()));
@@ -149,7 +149,7 @@ void ChatServerForm::receiveData( )
         }
         /* 로그인 실패 시 */
         sendLogInOut(clientConnection, "false");    // 로그인 성공 유무를 전송
-
+        clientConnection->disconnectFromHost();     // 소켓 연결 해제
         break;
     }
 
@@ -184,24 +184,23 @@ void ChatServerForm::receiveData( )
             /* 발신자를 뺀 나머지에게 메시지 보내줌 */
             if(clientPortIDHash.contains(sock->peerPort()) && sock != clientConnection) {
                 /* 현재 채팅 중인 상태의 클라이언트 에게 데이터를 보내줌  */
-                foreach(auto item, ui->clientTreeWidget->findItems(clientPortIDHash[sock->peerPort()], Qt::MatchFixedString, 2)) {
+                foreach(auto item, ui->clientTreeWidget->findItems(clientPortIDHash[sock->peerPort()],Qt::MatchFixedString, 2)) {
                     if(item->text(0) == tr("Chat")){
                         QByteArray sendArray;
                         sendArray.clear();
                         QDataStream out(&sendArray, QIODevice::WriteOnly);
                         out << Chat_Talk;
-                        sendArray.append("<font color=blue>");
-                        sendArray.append(clientNameHash[port].toStdString().data());
-                        sendArray.append("("+clientPortIDHash[port].toStdString()+")");
-                        sendArray.append("</font> : ");
-                        sendArray.append(receiveData.toStdString().data());
+                        QString data;
+                        data = QString("<font color=blue>") + clientNameHash[port]
+                                + "(" + clientPortIDHash[port] + ")" +  "</font> : " + receiveData;
+                        out.writeRawData(data.toStdString().data(), 1020);
                         sock->write(sendArray);
                     }
                 }
             }
         }
         /* 채팅 로그 기록 */
-        QTreeWidgetItem* item = new QTreeWidgetItem(ui->messageTreeWidget);
+        QTreeWidgetItem* item = new QTreeWidgetItem(ui->chatlogTreeWidget);
         item->setText(0, ip);
         item->setText(1, QString::number(port));
         item->setText(2, clientPortIDHash[port]);
@@ -209,13 +208,13 @@ void ChatServerForm::receiveData( )
         item->setText(4, QString(data));
         item->setText(5, QDateTime::currentDateTime().toString());
         item->setToolTip(4, QString(data));
-        ui->messageTreeWidget->addTopLevelItem(item);
-        for(int i = 0; i < ui->messageTreeWidget->columnCount(); i++)
-            ui->messageTreeWidget->resizeColumnToContents(i);
+        ui->chatlogTreeWidget->addTopLevelItem(item);
+        for(int i = 0; i < ui->chatlogTreeWidget->columnCount(); i++)
+            ui->chatlogTreeWidget->resizeColumnToContents(i);
 
         /* 이름, id 값과 입력받은 메시지를 관리자 채팅창으로  */
-        ui->message->append("<font color=blue>" + clientNameHash[port] + "(" + clientPortIDHash[port] + ")"
-                            + "</font> : " + receiveData);
+        ui->message->append("<font color=blue>" + clientNameHash[port] +
+                            "(" + clientPortIDHash[port] + ")" + "</font> : " + receiveData);
 
         /* logThread로 로그데이터 보냄 */
         logThread->appendData(item);
@@ -420,7 +419,7 @@ void ChatServerForm::readClient()
         progressDialog->setMaximum(totalSize);
 
         /* 채팅 로그 기록 */
-        QTreeWidgetItem* item = new QTreeWidgetItem(ui->messageTreeWidget);
+        QTreeWidgetItem* item = new QTreeWidgetItem(ui->chatlogTreeWidget);
         item->setText(0, ip);
         item->setText(1, QString::number(port));
         item->setText(2,  id);
@@ -430,10 +429,10 @@ void ChatServerForm::readClient()
         item->setToolTip(4, filename);
 
         /* 컨텐츠의 길이로 QTreeWidget의 헤더의 크기를 고정 */
-        for(int i = 0; i < ui->messageTreeWidget->columnCount(); i++)
-            ui->messageTreeWidget->resizeColumnToContents(i);
+        for(int i = 0; i < ui->chatlogTreeWidget->columnCount(); i++)
+            ui->chatlogTreeWidget->resizeColumnToContents(i);
 
-        ui->messageTreeWidget->addTopLevelItem(item);
+        ui->chatlogTreeWidget->addTopLevelItem(item);
         /* logThread 로그데이터 보냄 */
         logThread->appendData(item);
 
@@ -472,7 +471,7 @@ void ChatServerForm::on_sendButton_clicked()
 {
     QString str = ui->inputLineEdit->text( );
     if(str.length( )) {
-        ui->message->append("<font color=red>Manager</font> : " + str);
+        ui->message->append("<font color=red>" + tr("Manager") +"</font> : " + str);
         /* 연결되어 있는 모든 소켓 */
         foreach(QTcpSocket *sock, clientSocketHash.values()) {
             foreach(auto item, ui->clientTreeWidget->findItems(clientPortIDHash[sock->peerPort()], Qt::MatchFixedString, 2)) {
@@ -483,20 +482,15 @@ void ChatServerForm::on_sendButton_clicked()
                     QDataStream out(&sendArray, QIODevice::WriteOnly);
                     out << Chat_Talk;
                     QString data ;
-                    data = QString("<font color=red>") + "Manager" + "</font> : " + str ;
+                    data = QString("<font color=red>") + tr("Manager") + "</font> : " + str ;
                     out.writeRawData(data.toStdString().data(), 1020);
-
-                    //sendArray.append("<font color=red>");
-                    //sendArray.append("Manager");
-                    //sendArray.append("</font> : ");
-                    //sendArray.append(str.toStdString().data());
                     sock->write(sendArray);
                 }
             }
         }
     }
     /* 채팅 로그 기록 */
-    QTreeWidgetItem* item = new QTreeWidgetItem(ui->messageTreeWidget);
+    QTreeWidgetItem* item = new QTreeWidgetItem(ui->chatlogTreeWidget);
     item->setText(0, chatServer->serverAddress().toString());
     item->setText(1, QString::number(chatServer->serverPort()));
     item->setText(2, "Manager");
@@ -504,9 +498,9 @@ void ChatServerForm::on_sendButton_clicked()
     item->setText(4, str);
     item->setText(5, QDateTime::currentDateTime().toString());
     item->setToolTip(4, str);
-    ui->messageTreeWidget->addTopLevelItem(item);
-    for(int i = 0; i < ui->messageTreeWidget->columnCount(); i++)
-        ui->messageTreeWidget->resizeColumnToContents(i);
+    ui->chatlogTreeWidget->addTopLevelItem(item);
+    for(int i = 0; i < ui->chatlogTreeWidget->columnCount(); i++)
+        ui->chatlogTreeWidget->resizeColumnToContents(i);
 
     /* logThread로 로그데이터 보냄 */
     logThread->appendData(item);

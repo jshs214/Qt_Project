@@ -54,7 +54,7 @@
    <addaction name="separator"/>
    <addaction name="actionClient"/>
    <addaction name="separator"/>
-   <addaction name="actionproduct"/>
+   <addaction name="actionProduct"/>
    <addaction name="separator"/>
    <addaction name="actionOrder"/>
    <addaction name="separator"/>
@@ -77,7 +77,7 @@
     <string>Ctrl+1</string>
    </property>
   </action>
-  <action name="actionproduct">
+  <action name="actionProduct">
    <property name="text">
     <string>Product</string>
    </property>

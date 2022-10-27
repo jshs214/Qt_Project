@@ -28,8 +28,7 @@ private slots:
     void on_statePushButton_clicked();      /* 검색결과 창에서 제품정보관리로 돌아오는 슬롯 */
     void showContextMenu(const QPoint &);   /* ContextMenu 슬롯 */
     void removeItem();      /* 제품정보의 데이터(트리위젯)의 리스트 제거 슬롯 */
-
-    void on_treeWidget_itemClicked(QTreeWidgetItem *item, int column);
+    void on_productTreeWidget_itemClicked(QTreeWidgetItem *item, int column);   /* 등록된 제품정보 클릭 시 관련정보 출력 슬롯*/
 
     void receiveProductName(QString);
     void receiveAddStock(int, QString);
@@ -38,8 +37,6 @@ private slots:
 
     void receiveProductKey(int);
     void on_clearbutton_clicked();      /* 버튼 클릭 시 입력 값 초기화 하는 슬롯 */
-
-
 
 private:
     int makeId();

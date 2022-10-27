@@ -17,9 +17,9 @@ ProductManagerForm::ProductManagerForm(QWidget *parent) :
     connect(removeAction, SIGNAL(triggered()), SLOT(removeItem()));
     menu = new QMenu;
     menu->addAction(removeAction);
-    ui->treeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+    ui->productTreeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
 
-    connect(ui->treeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu(QPoint)));
+    connect(ui->productTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu(QPoint)));
 
     connect(ui->searchLineEdit, SIGNAL(returnPressed()),
             this, SLOT(on_searchPushButton_clicked()));
@@ -27,7 +27,6 @@ ProductManagerForm::ProductManagerForm(QWidget *parent) :
     ui->priceLineEdit->setValidator( new QIntValidator(0, 99999999, this) );    //숫자만 받도록
     ui->stockLineEdit->setValidator( new QIntValidator(0, 9999, this) );        //숫자만 받도록
 
-    ui->clearButton->setIcon(QIcon(":/images/eraser.png"));
 }
 /* 파일의 데이터 입력하는 메서드 */
 void ProductManagerForm::loadData()
@@ -43,7 +42,7 @@ void ProductManagerForm::loadData()
         if(row.size()) {
             int id = row[0].toInt();
             ProductItem* c = new ProductItem(id, row[1], row[2], row[3]);
-            ui->treeWidget->addTopLevelItem(c);
+            ui->productTreeWidget->addTopLevelItem(c);
             productList.insert(id, c);
         }
     }
@@ -85,7 +84,7 @@ int ProductManagerForm::makeId( )
 void ProductManagerForm::on_addPushButton_clicked()
 {
     /* 검색 결과에서 정보 추가 시 경고메시지 */
-    if(ui->productInfoLabel->text() != "ProductInfoManager")
+    if(ui->productInfoLabel->text() != tr("ProductInfoManager"))
     {
         QMessageBox::warning(this, tr("Error"),
                              QString( tr("This is Search Info.\nGo to ProductInfoManager.")) );
@@ -101,7 +100,7 @@ void ProductManagerForm::on_addPushButton_clicked()
     if(name.length() && price.length() && stock.length()) {
         ProductItem* p = new ProductItem(id, name, price, stock);
         productList.insert(id, p);
-        ui->treeWidget->addTopLevelItem(p);
+        ui->productTreeWidget->addTopLevelItem(p);
 
         ui->nameLineEdit->clear();
         ui->priceLineEdit->clear();
@@ -112,7 +111,7 @@ void ProductManagerForm::on_addPushButton_clicked()
 /* 제품정보변경을 위한 슬롯 */
 void ProductManagerForm::on_modifyPushButton_clicked()
 {
-    QTreeWidgetItem* item = ui->treeWidget->currentItem();
+    QTreeWidgetItem* item = ui->productTreeWidget->currentItem();
     /* 변경할 제품의 데이터를 입력한 데이터로 정보 수정 */
     if(item != nullptr) {
         int key = item->text(0).toInt();    //id 값을 가져와
@@ -142,7 +141,7 @@ void ProductManagerForm::on_searchPushButton_clicked()
 
     int i = ui->searchComboBox->currentIndex(); //무엇으로 검색할지 콤보박스의 인덱스를 가져옴
     {   /* 검색과 일치하거나 포함하는 문자열이 있으면 hidden(false) */
-        auto items = ui->treeWidget->findItems(ui->searchLineEdit->text(), Qt::MatchContains, i);
+        auto items = ui->productTreeWidget->findItems(ui->searchLineEdit->text(), Qt::MatchContains, i);
         foreach(auto i, items) {
             i->setHidden(false);    //검색된 리스트만 출력되게
         }
@@ -162,24 +161,24 @@ void ProductManagerForm::on_statePushButton_clicked()
 /* ContextMenu 슬롯 */
 void ProductManagerForm::showContextMenu(const QPoint &pos)
 {
-    if(ui->treeWidget->currentItem() == nullptr)    return;
-    QPoint globalPos = ui->treeWidget->mapToGlobal(pos);
+    if(ui->productTreeWidget->currentItem() == nullptr)    return;
+    QPoint globalPos = ui->productTreeWidget->mapToGlobal(pos);
     menu->exec(globalPos);
 }
 
 /* 제품정보의 데이터(트리위젯)의 리스트 제거 슬롯 */
 void ProductManagerForm::removeItem()
 {   /* 선택된 정보의 리스트를 트리위젯에서 제거 */
-    QTreeWidgetItem* item = ui->treeWidget->currentItem();
+    QTreeWidgetItem* item = ui->productTreeWidget->currentItem();
     if(item != nullptr) {   //예외처리
         productList.remove(item->text(0).toInt());
-        ui->treeWidget->takeTopLevelItem(ui->treeWidget->indexOfTopLevelItem(item));
-        ui->treeWidget->update();
+        ui->productTreeWidget->takeTopLevelItem(ui->productTreeWidget->indexOfTopLevelItem(item));
+        ui->productTreeWidget->update();
     }
 }
 
 /* 등록된 제품정보 클릭 시 관련정보 출력 슬롯*/
-void ProductManagerForm::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
+void ProductManagerForm::on_productTreeWidget_itemClicked(QTreeWidgetItem *item, int column)
 {
     Q_UNUSED(column);
     ui->idLineEdit->setText(item->text(0));
@@ -188,6 +187,7 @@ void ProductManagerForm::on_treeWidget_itemClicked(QTreeWidgetItem *item, int co
     ui->stockLineEdit->setText(item->text(3));
 }
 
+
 /* Order에서 제품 id나 제품명을 받아오는 슬롯*/
 void ProductManagerForm::receiveProductName(QString str)
 {
@@ -195,7 +195,7 @@ void ProductManagerForm::receiveProductName(QString str)
 
     auto flag =  Qt::MatchCaseSensitive|Qt::MatchContains;
 
-    auto id = ui->treeWidget->findItems(str, flag,0);        //키값비교, 0
+    auto id = ui->productTreeWidget->findItems(str, flag,0);        //키값비교, 0
     foreach(auto i, id) {
         ProductItem* p = static_cast<ProductItem*>(i);
         int id = p->id();
@@ -206,7 +206,7 @@ void ProductManagerForm::receiveProductName(QString str)
         searchList.insert(p->id(), item);
     }
 
-    auto items = ui->treeWidget->findItems(str, flag,1);        //이름이므로 1
+    auto items = ui->productTreeWidget->findItems(str, flag,1);        //이름이므로 1
     foreach(auto i, items) {
         ProductItem* p = static_cast<ProductItem*>(i);
         int id = p->id();
@@ -282,6 +282,8 @@ void ProductManagerForm::on_clearbutton_clicked()
     ui->stockLineEdit->clear();
     ui->searchLineEdit->clear();
 }
+
+
 
 
 

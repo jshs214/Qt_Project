@@ -18,9 +18,9 @@ ClientManagerForm::ClientManagerForm(QWidget *parent) :
     connect(removeAction, SIGNAL(triggered()), SLOT(removeItem()));
     menu = new QMenu;
     menu->addAction(removeAction);
-    ui->treeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+    ui->clientTreeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
 
-    connect(ui->treeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu(QPoint)));
+    connect(ui->clientTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu(QPoint)));
 
     connect(ui->searchLineEdit, SIGNAL(returnPressed()),
             this, SLOT(on_searchPushButton_clicked()));
@@ -30,7 +30,6 @@ ClientManagerForm::ClientManagerForm(QWidget *parent) :
     regExpValidator->setRegularExpression(QRegularExpression("^\\d{2,3}-\\d{3,4}-\\d{4}$"));
     ui->phoneNumberLineEdit->setValidator(regExpValidator);
 
-    ui->clearButton->setIcon(QIcon(":/images/eraser.png"));
 }
 /* 파일의 데이터 입력하는 메서드 */
 void ClientManagerForm::loadData()
@@ -47,7 +46,7 @@ void ClientManagerForm::loadData()
         if(row.size()) {
             int id = row[0].toInt();
             ClientItem* c = new ClientItem(id, row[1], row[2], row[3]);
-            ui->treeWidget->addTopLevelItem(c);
+            ui->clientTreeWidget->addTopLevelItem(c);
             clientList.insert(id, c);
 
             /* 채팅서버에서 등록된 고객을 알기 위해 id, 이름을 시그널로 보냄 */
@@ -108,7 +107,7 @@ void ClientManagerForm::on_addPushButton_clicked()
     if(name.length() && number.length() && address.length()) {
         ClientItem* c = new ClientItem(id, name, number, address);
         clientList.insert(id, c);
-        ui->treeWidget->addTopLevelItem(c);
+        ui->clientTreeWidget->addTopLevelItem(c);
 
         ui->nameLineEdit->clear();
         ui->phoneNumberLineEdit->clear();
@@ -121,7 +120,7 @@ void ClientManagerForm::on_addPushButton_clicked()
 /* 고객정보변경을 위한 슬롯 */
 void ClientManagerForm::on_modifyPushButton_clicked()
 {
-    QTreeWidgetItem* item = ui->treeWidget->currentItem();
+    QTreeWidgetItem* item = ui->clientTreeWidget->currentItem();
     /* 변경할 고객의 데이터를 입력한 데이터로 정보 수정 */
     if(item != nullptr) {
         int key = item->text(0).toInt();    //id 값을 가져와
@@ -151,7 +150,7 @@ void ClientManagerForm::on_searchPushButton_clicked()
 
     int i = ui->searchComboBox->currentIndex(); //무엇으로 검색할지 콤보박스의 인덱스를 가져옴
     {   /* 검색과 일치하거나 포함하는 문자열이 있으면 hidden(false) */
-        auto items = ui->treeWidget->findItems(ui->searchLineEdit->text(), Qt::MatchContains, i);
+        auto items = ui->clientTreeWidget->findItems(ui->searchLineEdit->text(), Qt::MatchContains, i);
         foreach(auto i, items) {
             i->setHidden(false);    //검색된 리스트만 출력되게
         }
@@ -171,8 +170,8 @@ void ClientManagerForm::on_statePushButton_clicked()
 /* ContextMenu 슬롯 */
 void ClientManagerForm::showContextMenu(const QPoint &pos)
 {
-    if(ui->treeWidget->currentItem() == nullptr)    return;
-    QPoint globalPos = ui->treeWidget->mapToGlobal(pos);
+    if(ui->clientTreeWidget->currentItem() == nullptr)    return;
+    QPoint globalPos = ui->clientTreeWidget->mapToGlobal(pos);
     menu->exec(globalPos);
 }
 
@@ -180,18 +179,18 @@ void ClientManagerForm::showContextMenu(const QPoint &pos)
 void ClientManagerForm::removeItem()
 {
     /* 선택된 정보의 리스트를 트리위젯에서 제거 */
-    QTreeWidgetItem* item = ui->treeWidget->currentItem();
+    QTreeWidgetItem* item = ui->clientTreeWidget->currentItem();
     if(item != nullptr) {   // 에외처리
         clientList.remove(item->text(0).toInt());
         /* 채팅서버에서 삭제된 고객을 알기 위해 id를 시그널로 보냄 */
         emit remClient(item->text(0).toInt());
-        ui->treeWidget->takeTopLevelItem(ui->treeWidget->indexOfTopLevelItem(item));
-        ui->treeWidget->update();
+        ui->clientTreeWidget->takeTopLevelItem(ui->clientTreeWidget->indexOfTopLevelItem(item));
+        ui->clientTreeWidget->update();
     }
 }
 
 /* 등록된 고객정보 클릭 시 관련정보 출력 슬롯*/
-void ClientManagerForm::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
+void ClientManagerForm::on_clientTreeWidget_itemClicked(QTreeWidgetItem *item, int column)
 {
     Q_UNUSED(column);
     ui->idLineEdit->setText(item->text(0));
@@ -200,6 +199,7 @@ void ClientManagerForm::on_treeWidget_itemClicked(QTreeWidgetItem *item, int col
     ui->addressLineEdit->setText(item->text(3));
 }
 
+
 /* Order에서 고객 id나 이름을 받아오는 슬롯*/
 void ClientManagerForm::receiveClientName(QString str)
 {
@@ -207,7 +207,7 @@ void ClientManagerForm::receiveClientName(QString str)
 
     auto flag =  Qt::MatchCaseSensitive|Qt::MatchContains;
 
-    auto id = ui->treeWidget->findItems(str, flag,0);        //키값비교, 0
+    auto id = ui->clientTreeWidget->findItems(str, flag,0);        //키값비교, 0
     foreach(auto i, id) {
         ClientItem* c = static_cast<ClientItem*>(i);
         int id = c->id();
@@ -218,7 +218,7 @@ void ClientManagerForm::receiveClientName(QString str)
         searchList.insert(c->id(), item);
     }
 
-    auto items = ui->treeWidget->findItems(str, flag,1);     //이름이므로 1
+    auto items = ui->clientTreeWidget->findItems(str, flag,1);     //이름이므로 1
     foreach(auto i, items) {
         ClientItem* c = static_cast<ClientItem*>(i);
         int id = c->id();
@@ -259,3 +259,5 @@ void ClientManagerForm::on_clearButton_clicked()
     ui->addressLineEdit->clear();
     ui->searchLineEdit->clear();
 }
+
+

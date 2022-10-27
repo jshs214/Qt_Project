@@ -22,7 +22,7 @@
      <widget class="QWidget" name="layoutWidget">
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="QLabel" name="label_5">
+        <widget class="QLabel" name="chatServerLabel">
          <property name="font">
           <font>
            <family>휴먼매직체</family>
@@ -43,7 +43,7 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_2">
             <item>
-             <widget class="QLabel" name="label">
+             <widget class="QLabel" name="ipLabel">
               <property name="text">
                <string>IP</string>
               </property>
@@ -69,7 +69,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="label_3">
+           <widget class="QLabel" name="stateLabel">
             <property name="text">
              <string>Chatting_On</string>
             </property>
@@ -149,14 +149,14 @@
      <widget class="QWidget" name="layoutWidget1">
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <widget class="QLabel" name="label_2">
+        <widget class="QLabel" name="chatLogLabel">
          <property name="text">
           <string>Chatting Log</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QTreeWidget" name="messageTreeWidget">
+        <widget class="QTreeWidget" name="chatlogTreeWidget">
          <property name="rootIsDecorated">
           <bool>false</bool>
          </property>
@@ -205,7 +205,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="saveButton">
+          <widget class="QPushButton" name="savePushButton">
            <property name="text">
             <string>Save</string>
            </property>
@@ -214,7 +214,7 @@
         </layout>
        </item>
        <item>
-        <widget class="QLabel" name="label_4">
+        <widget class="QLabel" name="managerChatLabel">
          <property name="text">
           <string>Manager_Chatting</string>
          </property>
@@ -252,7 +252,7 @@
   <connection>
    <sender>clearPushButton</sender>
    <signal>clicked()</signal>
-   <receiver>messageTreeWidget</receiver>
+   <receiver>chatlogTreeWidget</receiver>
    <slot>clear()</slot>
    <hints>
     <hint type="sourcelabel">

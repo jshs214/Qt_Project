@@ -23,20 +23,22 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_actionClient_triggered();
-    void on_actionproduct_triggered();
-    void on_actionOrder_triggered();
-    void on_actionServer_triggered();
-    void on_actionChat_triggered();
+    void on_actionClient_triggered();   /* 고객정보 슬롯 */
+    void on_actionProduct_triggered();  /* 제품정보 슬롯 */
+    void on_actionOrder_triggered();    /* 주문정보 슬롯 */
+    void on_actionServer_triggered();   /* 채팅서버 슬롯 */
+    void on_actionChat_triggered();     /* 채팅창 open하는 슬롯 */
+
+
 
 private:
     Ui::MainWindow *ui;
 
-    ClientManagerForm *clientForm;
-    ProductManagerForm *productForm;
-    OrderManagerForm *orderForm;
-    ChatServerForm *serverForm;
-    ChattingForm *chattingForm;
+    ClientManagerForm *clientForm;      /* 고객정보관리form */
+    ProductManagerForm *productForm;    /* 제품정보관리form */
+    OrderManagerForm *orderForm;        /* 주문정보관리form */
+    ChatServerForm *serverForm;         /* 채팅서버form */
+    ChattingForm *chattingForm;         /* 채팅창form */
 
 };
 #endif // MAINWINDOW_H
